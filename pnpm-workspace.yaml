@@ -1,3 +1,9 @@
 packages:
   - api
   - web
+
+# Dependencies allowed to run install scripts (pnpm blocks all others by default)
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - esbuild
+  - prisma
