@@ -10,7 +10,7 @@ type IdsBySlug = Map<string, number>;
 function toSlug(text: string): string {
   return text
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '') // strip accents: "Ténéré" -> "Tenere"
+    .replace(/\p{M}/gu, '') // strip accent marks left by NFD: "Ténéré" -> "Tenere"
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
@@ -51,6 +51,7 @@ async function seedCategories(tx: Tx): Promise<IdsBySlug> {
 }
 
 async function seedMotorcycles(tx: Tx, brandIds: IdsBySlug, categoryIds: IdsBySlug): Promise<void> {
+  const seededSlugs: string[] = [];
   for (const { brandSlug, categorySlug, ...specs } of motorcycles) {
     const slug = toSlug(`${brandSlug} ${specs.name} ${String(specs.year)}`);
     const data = {
@@ -60,7 +61,11 @@ async function seedMotorcycles(tx: Tx, brandIds: IdsBySlug, categoryIds: IdsBySl
       categoryId: requireId(categoryIds, categorySlug),
     };
     await tx.motorcycle.upsert({ where: { slug }, update: data, create: data });
+    seededSlugs.push(slug);
   }
+
+  // The seed is the source of truth: drop motorcycles renamed or removed from the seed data
+  await tx.motorcycle.deleteMany({ where: { slug: { notIn: seededSlugs } } });
 }
 
 async function main(): Promise<void> {
@@ -71,12 +76,16 @@ async function main(): Promise<void> {
 
   const prisma = createPrismaClient(databaseUrl);
   try {
-    // One transaction: the seed either applies completely or not at all
-    await prisma.$transaction(async (tx) => {
-      const brandIds = await seedBrands(tx);
-      const categoryIds = await seedCategories(tx);
-      await seedMotorcycles(tx, brandIds, categoryIds);
-    });
+    // One transaction: the seed either applies completely or not at all.
+    // Generous limits because a remote database (Neon) may need seconds to wake up.
+    await prisma.$transaction(
+      async (tx) => {
+        const brandIds = await seedBrands(tx);
+        const categoryIds = await seedCategories(tx);
+        await seedMotorcycles(tx, brandIds, categoryIds);
+      },
+      { maxWait: 10_000, timeout: 30_000 },
+    );
     console.info(
       `Seed done: ${String(brands.length)} brands, ${String(categories.length)} categories, ${String(motorcycles.length)} motorcycles`,
     );
