@@ -2,7 +2,7 @@
 
 Aplicación para comparar especificaciones de motocicletas: catálogo con filtros, ficha de detalle y comparador de 2 a 4 motos con gráficos.
 
-Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) construido por fases; el plan completo está en [ROADMAP.md](ROADMAP.md).
+Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) construido por fases.
 
 > **Estado:** Fase 0, esqueleto del monorepo y herramientas. Aún no hay API ni interfaz.
 
@@ -45,6 +45,5 @@ motocompare/
 ├── api/                  # API GraphQL
 ├── web/                  # App React
 ├── docs/aprendizaje/     # notas de aprendizaje por fase
-├── docker-compose.yml    # PostgreSQL local
-└── ROADMAP.md            # plan por fases
+└── docker-compose.yml    # PostgreSQL local
 ```
