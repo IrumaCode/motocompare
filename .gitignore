@@ -6,6 +6,9 @@ dist/
 build/
 *.tsbuildinfo
 
+# Generated code (recreate with `pnpm --filter api db:generate`)
+api/src/generated/
+
 # Environment variables (only .env.example is committed)
 .env
 .env.*

@@ -1,0 +1,95 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EngineType {
+  SINGLE
+  PARALLEL_TWIN
+  V_TWIN
+  BOXER_TWIN
+  INLINE_THREE
+  INLINE_FOUR
+  V_FOUR
+}
+
+enum CoolingType {
+  AIR
+  AIR_OIL
+  AIR_LIQUID
+  LIQUID
+}
+
+enum TransmissionType {
+  MANUAL
+  CVT
+  DCT
+}
+
+model Brand {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  slug        String       @unique
+  country     String
+  motorcycles Motorcycle[]
+
+  @@map("brands")
+}
+
+model Category {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  slug        String       @unique
+  motorcycles Motorcycle[]
+
+  @@map("categories")
+}
+
+model Motorcycle {
+  id    Int    @id @default(autoincrement())
+  slug  String @unique
+  /// Model name without the brand, e.g. "MT-07"
+  name  String
+  year  Int
+
+  brandId    Int      @map("brand_id")
+  brand      Brand    @relation(fields: [brandId], references: [id])
+  categoryId Int      @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  /// Base MSRP in whole US dollars; null when there is no official US price
+  priceUsd Int? @map("price_usd")
+
+  displacementCc Int         @map("displacement_cc")
+  engineType     EngineType  @map("engine_type")
+  cooling        CoolingType
+
+  powerHp   Float @map("power_hp")
+  powerRpm  Int   @map("power_rpm")
+  torqueNm  Float @map("torque_nm")
+  torqueRpm Int   @map("torque_rpm")
+
+  transmission TransmissionType
+  /// Number of gears; null for CVT
+  gears        Int?
+
+  /// Ready-to-ride (curb) weight
+  weightKg      Int   @map("weight_kg")
+  seatHeightMm  Int   @map("seat_height_mm")
+  fuelCapacityL Float @map("fuel_capacity_l")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([brandId, name, year])
+  @@index([categoryId])
+  @@index([displacementCc])
+  @@index([priceUsd])
+  @@map("motorcycles")
+}
