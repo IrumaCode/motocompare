@@ -4,7 +4,12 @@ import type {
   TransmissionType,
 } from '../../src/generated/prisma/enums.js';
 
-export interface MotorcycleSeed {
+// A CVT has no discrete gears; every other transmission must declare how many it has
+type TransmissionSpec =
+  | { transmission: 'CVT'; gears: null }
+  | { transmission: Exclude<TransmissionType, 'CVT'>; gears: number };
+
+export type MotorcycleSeed = TransmissionSpec & {
   brandSlug: string;
   categorySlug: string;
   name: string;
@@ -17,18 +22,18 @@ export interface MotorcycleSeed {
   powerRpm: number;
   torqueNm: number;
   torqueRpm: number;
-  transmission: TransmissionType;
-  gears: number | null;
   weightKg: number;
   seatHeightMm: number;
   fuelCapacityL: number;
-}
+};
 
 /*
- * Manually curated from manufacturer spec sheets, model year 2024. REVIEW BEFORE PUBLISHING.
- * - Power: official kW figure (EU sheets) converted to mechanical hp (kW x 1.341).
+ * Manually curated, model year 2024, verified in October 2026 against manufacturer spec sheets
+ * and press releases (no scraping).
+ * - Power: official kW figure converted to mechanical hp (kW x 1.341).
  * - Weight: ready-to-ride. KTM publishes weight without fuel, so a full tank is added (0.74 kg/L).
- * - priceUsd: approximate US base MSRP; prices change every model year.
+ * - Seat height: standard seat, lowest standard position.
+ * - priceUsd: US base MSRP without destination charge; null when no official figure was confirmed.
  */
 export const motorcycles: MotorcycleSeed[] = [
   // Yamaha
@@ -37,7 +42,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'deportiva',
     name: 'YZF-R3',
     year: 2024,
-    priceUsd: 5799,
+    priceUsd: 5499,
     displacementCc: 321,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
@@ -47,7 +52,7 @@ export const motorcycles: MotorcycleSeed[] = [
     torqueRpm: 9000,
     transmission: 'MANUAL',
     gears: 6,
-    weightKg: 169,
+    weightKg: 170,
     seatHeightMm: 780,
     fuelCapacityL: 14,
   },
@@ -113,7 +118,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'adventure',
     name: 'Ténéré 700',
     year: 2024,
-    priceUsd: 10999,
+    priceUsd: 10799,
     displacementCc: 689,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
@@ -123,16 +128,16 @@ export const motorcycles: MotorcycleSeed[] = [
     torqueRpm: 6500,
     transmission: 'MANUAL',
     gears: 6,
-    weightKg: 204,
+    weightKg: 205,
     seatHeightMm: 875,
     fuelCapacityL: 16,
   },
   {
     brandSlug: 'yamaha',
     categorySlug: 'touring',
-    name: 'Tracer 9 GT',
+    name: 'Tracer 9 GT+',
     year: 2024,
-    priceUsd: 15499,
+    priceUsd: 16499,
     displacementCc: 890,
     engineType: 'INLINE_THREE',
     cooling: 'LIQUID',
@@ -142,8 +147,8 @@ export const motorcycles: MotorcycleSeed[] = [
     torqueRpm: 7000,
     transmission: 'MANUAL',
     gears: 6,
-    weightKg: 220,
-    seatHeightMm: 810,
+    weightKg: 223,
+    seatHeightMm: 820,
     fuelCapacityL: 18,
   },
 
@@ -153,7 +158,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'scooter',
     name: 'ADV160',
     year: 2024,
-    priceUsd: 4399,
+    priceUsd: 4499,
     displacementCc: 157,
     engineType: 'SINGLE',
     cooling: 'LIQUID',
@@ -164,7 +169,7 @@ export const motorcycles: MotorcycleSeed[] = [
     transmission: 'CVT',
     gears: null,
     weightKg: 133,
-    seatHeightMm: 780,
+    seatHeightMm: 765,
     fuelCapacityL: 8.1,
   },
   {
@@ -172,7 +177,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'doble-proposito',
     name: 'CRF300L',
     year: 2024,
-    priceUsd: 5999,
+    priceUsd: 5449,
     displacementCc: 286,
     engineType: 'SINGLE',
     cooling: 'LIQUID',
@@ -182,7 +187,7 @@ export const motorcycles: MotorcycleSeed[] = [
     torqueRpm: 6500,
     transmission: 'MANUAL',
     gears: 6,
-    weightKg: 142,
+    weightKg: 141,
     seatHeightMm: 880,
     fuelCapacityL: 7.8,
   },
@@ -220,7 +225,7 @@ export const motorcycles: MotorcycleSeed[] = [
     torqueRpm: 9500,
     transmission: 'MANUAL',
     gears: 6,
-    weightKg: 209,
+    weightKg: 211,
     seatHeightMm: 810,
     fuelCapacityL: 15.4,
   },
@@ -229,7 +234,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'custom',
     name: 'Rebel 1100',
     year: 2024,
-    priceUsd: 9599,
+    priceUsd: 9549,
     displacementCc: 1084,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
@@ -239,7 +244,7 @@ export const motorcycles: MotorcycleSeed[] = [
     torqueRpm: 4750,
     transmission: 'MANUAL',
     gears: 6,
-    weightKg: 223,
+    weightKg: 221,
     seatHeightMm: 700,
     fuelCapacityL: 13.6,
   },
@@ -248,7 +253,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'adventure',
     name: 'Africa Twin',
     year: 2024,
-    priceUsd: 14599,
+    priceUsd: 14799,
     displacementCc: 1084,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
@@ -269,18 +274,18 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'doble-proposito',
     name: 'KLX230 S',
     year: 2024,
-    priceUsd: 5299,
+    priceUsd: 4999,
     displacementCc: 233,
     engineType: 'SINGLE',
     cooling: 'AIR',
-    powerHp: 18.8,
-    powerRpm: 7600,
-    torqueNm: 19.8,
-    torqueRpm: 6100,
+    powerHp: 17.7,
+    powerRpm: 8000,
+    torqueNm: 17.9,
+    torqueRpm: 6400,
     transmission: 'MANUAL',
     gears: 6,
     weightKg: 132,
-    seatHeightMm: 830,
+    seatHeightMm: 845,
     fuelCapacityL: 7.6,
   },
   {
@@ -298,7 +303,7 @@ export const motorcycles: MotorcycleSeed[] = [
     torqueRpm: 7500,
     transmission: 'MANUAL',
     gears: 6,
-    weightKg: 171,
+    weightKg: 168,
     seatHeightMm: 785,
     fuelCapacityL: 14,
   },
@@ -307,7 +312,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'deportiva',
     name: 'Ninja ZX-6R',
     year: 2024,
-    priceUsd: 11299,
+    priceUsd: 11399,
     displacementCc: 636,
     engineType: 'INLINE_FOUR',
     cooling: 'LIQUID',
@@ -317,7 +322,7 @@ export const motorcycles: MotorcycleSeed[] = [
     torqueRpm: 11000,
     transmission: 'MANUAL',
     gears: 6,
-    weightKg: 198,
+    weightKg: 196,
     seatHeightMm: 830,
     fuelCapacityL: 17,
   },
@@ -326,7 +331,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'naked',
     name: 'Z900',
     year: 2024,
-    priceUsd: 9399,
+    priceUsd: 9899,
     displacementCc: 948,
     engineType: 'INLINE_FOUR',
     cooling: 'LIQUID',
@@ -337,7 +342,7 @@ export const motorcycles: MotorcycleSeed[] = [
     transmission: 'MANUAL',
     gears: 6,
     weightKg: 212,
-    seatHeightMm: 795,
+    seatHeightMm: 800,
     fuelCapacityL: 17,
   },
   {
@@ -345,7 +350,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'touring',
     name: 'Versys 650',
     year: 2024,
-    priceUsd: 9199,
+    priceUsd: null,
     displacementCc: 649,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
@@ -356,7 +361,7 @@ export const motorcycles: MotorcycleSeed[] = [
     transmission: 'MANUAL',
     gears: 6,
     weightKg: 219,
-    seatHeightMm: 840,
+    seatHeightMm: 845,
     fuelCapacityL: 21,
   },
   {
@@ -364,17 +369,17 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'custom',
     name: 'Vulcan S',
     year: 2024,
-    priceUsd: 7649,
+    priceUsd: 7349,
     displacementCc: 649,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
     powerHp: 60.3,
     powerRpm: 7500,
-    torqueNm: 63,
+    torqueNm: 62.8,
     torqueRpm: 6600,
     transmission: 'MANUAL',
     gears: 6,
-    weightKg: 226,
+    weightKg: 223,
     seatHeightMm: 705,
     fuelCapacityL: 14,
   },
@@ -385,7 +390,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'naked',
     name: '390 Duke',
     year: 2024,
-    priceUsd: 5999,
+    priceUsd: 5899,
     displacementCc: 399,
     engineType: 'SINGLE',
     cooling: 'LIQUID',
@@ -396,7 +401,7 @@ export const motorcycles: MotorcycleSeed[] = [
     transmission: 'MANUAL',
     gears: 6,
     weightKg: 176,
-    seatHeightMm: 800,
+    seatHeightMm: 820,
     fuelCapacityL: 15,
   },
   {
@@ -423,7 +428,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'doble-proposito',
     name: '690 Enduro R',
     year: 2024,
-    priceUsd: 12099,
+    priceUsd: 12999,
     displacementCc: 693,
     engineType: 'SINGLE',
     cooling: 'LIQUID',
@@ -433,8 +438,8 @@ export const motorcycles: MotorcycleSeed[] = [
     torqueRpm: 6500,
     transmission: 'MANUAL',
     gears: 6,
-    weightKg: 156,
-    seatHeightMm: 910,
+    weightKg: 158,
+    seatHeightMm: 929,
     fuelCapacityL: 13.5,
   },
   {
@@ -442,7 +447,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'naked',
     name: '790 Duke',
     year: 2024,
-    priceUsd: 8999,
+    priceUsd: 9499,
     displacementCc: 799,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
@@ -461,11 +466,11 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'naked',
     name: '990 Duke',
     year: 2024,
-    priceUsd: 13099,
+    priceUsd: 12500,
     displacementCc: 947,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
-    powerHp: 120.7,
+    powerHp: 121.4,
     powerRpm: 9500,
     torqueNm: 103,
     torqueRpm: 6750,
@@ -473,14 +478,14 @@ export const motorcycles: MotorcycleSeed[] = [
     gears: 6,
     weightKg: 190,
     seatHeightMm: 825,
-    fuelCapacityL: 14.8,
+    fuelCapacityL: 14.5,
   },
   {
     brandSlug: 'ktm',
     categorySlug: 'adventure',
     name: '890 Adventure',
     year: 2024,
-    priceUsd: 13999,
+    priceUsd: null,
     displacementCc: 889,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
@@ -501,7 +506,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'naked',
     name: 'G 310 R',
     year: 2024,
-    priceUsd: 5145,
+    priceUsd: 4995,
     displacementCc: 313,
     engineType: 'SINGLE',
     cooling: 'LIQUID',
@@ -520,7 +525,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'adventure',
     name: 'G 310 GS',
     year: 2024,
-    priceUsd: 6445,
+    priceUsd: 5695,
     displacementCc: 313,
     engineType: 'SINGLE',
     cooling: 'LIQUID',
@@ -539,7 +544,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'naked',
     name: 'F 900 R',
     year: 2024,
-    priceUsd: 9995,
+    priceUsd: 8995,
     displacementCc: 895,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
@@ -558,7 +563,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'touring',
     name: 'F 900 XR',
     year: 2024,
-    priceUsd: 13195,
+    priceUsd: 11695,
     displacementCc: 895,
     engineType: 'PARALLEL_TWIN',
     cooling: 'LIQUID',
@@ -569,7 +574,7 @@ export const motorcycles: MotorcycleSeed[] = [
     transmission: 'MANUAL',
     gears: 6,
     weightKg: 219,
-    seatHeightMm: 825,
+    seatHeightMm: 815,
     fuelCapacityL: 15.5,
   },
   {
@@ -577,7 +582,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'deportiva',
     name: 'S 1000 RR',
     year: 2024,
-    priceUsd: 18995,
+    priceUsd: 18990,
     displacementCc: 999,
     engineType: 'INLINE_FOUR',
     cooling: 'LIQUID',
@@ -588,7 +593,7 @@ export const motorcycles: MotorcycleSeed[] = [
     transmission: 'MANUAL',
     gears: 6,
     weightKg: 197,
-    seatHeightMm: 832,
+    seatHeightMm: 824,
     fuelCapacityL: 16.5,
   },
   {
@@ -596,7 +601,7 @@ export const motorcycles: MotorcycleSeed[] = [
     categorySlug: 'adventure',
     name: 'R 1300 GS',
     year: 2024,
-    priceUsd: 18895,
+    priceUsd: 20395,
     displacementCc: 1300,
     engineType: 'BOXER_TWIN',
     cooling: 'AIR_LIQUID',

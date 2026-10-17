@@ -63,7 +63,7 @@ model Motorcycle {
   categoryId Int      @map("category_id")
   category   Category @relation(fields: [categoryId], references: [id])
 
-  /// Base MSRP in whole US dollars; null when there is no official US price
+  /// Base MSRP in whole US dollars; null when no official US price was confirmed
   priceUsd Int? @map("price_usd")
 
   displacementCc Int         @map("displacement_cc")
