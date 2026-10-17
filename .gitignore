@@ -26,5 +26,7 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Claude Code local settings
-.claude/settings.local.json
+# Claude Code files are local-only: never committed
+CLAUDE.md
+.claude/
+skills-lock.json
