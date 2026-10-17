@@ -46,7 +46,7 @@ pnpm --filter api db:seed       # carga las motos de ejemplo
 
 ## Datos
 
-Las especificaciones de las motos (modelo 2024) se curaron a mano a partir de las fichas oficiales de cada fabricante, sin scraping. La potencia se expresa en hp y el peso en orden de marcha. Los precios son el MSRP base de referencia en EE. UU. y son aproximados.
+Las especificaciones de las motos (modelo 2024) se curaron a mano a partir de las fichas oficiales de cada fabricante, sin scraping. Los datos se verificaron en octubre de 2026. La potencia se expresa en hp y el peso en orden de marcha. Los precios son el MSRP base en EE. UU., sin gastos de envío; si no se pudo confirmar un precio oficial, el campo queda vacío.
 
 ## Estructura
 

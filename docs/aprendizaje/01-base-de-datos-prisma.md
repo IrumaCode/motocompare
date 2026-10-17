@@ -22,7 +22,9 @@
 | Índices en categoría, cilindrada y precio              | Son las columnas por las que se filtrará en la Fase 2. La marca ya queda indexada por el `@@unique`, porque `brand_id` va primero.                                                                                                                         |
 | `@map` / `@@map` a `snake_case`                        | En TypeScript se usa `camelCase` (`powerHp`) y en SQL `snake_case` (`power_hp`), la convención de PostgreSQL. Así no hay que escribir comillas en SQL a mano.                                                                                              |
 | Seed **idempotente** (`upsert` por slug)               | Se puede ejecutar mil veces y el resultado es el mismo: crea lo que falta y actualiza lo que cambió.                                                                                                                                                       |
-| Seed en **una transacción**                            | Si falla una moto, no queda la base a medias.                                                                                                                                                                                                              |
+| El seed es la **fuente de verdad**                     | Al final borra las motos que ya no están en los datos. Si una moto cambia de nombre, cambia su slug, y sin este paso quedaría una fila "fantasma" con el nombre viejo.                                                                                     |
+| Seed en **una transacción** con límites amplios        | Si falla una moto, no queda la base a medias. Los límites (30 s) evitan que el seed se aborte contra una base remota que tarda en despertar.                                                                                                               |
+| Unión discriminada `transmission` / `gears`            | En TypeScript, `{ transmission: 'CVT', gears: null } \| { transmission: 'MANUAL' \| 'DCT', gears: number }`. Así el compilador impide una moto manual sin marchas: el tipo valida una regla de negocio.                                                    |
 | Prisma **7.10.1** y no 8                               | Prisma 8 sigue en RC y cambia cosas incompatibles entre candidatas.                                                                                                                                                                                        |
 | **Driver adapter** `@prisma/adapter-pg`                | Prisma 7 ya no trae un motor Rust para las consultas: habla con PostgreSQL mediante el driver `pg`. Es más ligero y más portable (útil para la Fase 8).                                                                                                    |
 | `process.loadEnvFile()` en vez de `dotenv`             | Prisma 7 ya no lee `.env` solo. Node 24 trae esta función integrada, así que no hace falta otra dependencia.                                                                                                                                               |
@@ -33,7 +35,12 @@
 
 - La potencia viene de la cifra oficial en kW (fichas europeas) convertida a hp: kW × 1,341.
 - El peso es en orden de marcha. KTM publica el peso sin combustible, así que se le suma el tanque lleno (0,74 kg/L).
-- **Los precios son aproximados** (MSRP base en EE. UU.). La conversión a COP en tiempo real queda para la Fase 2, como un servicio de la API.
+- **Verificación (octubre 2026):** las 30 motos se contrastaron con fichas oficiales y comunicados de prensa. 25 de las 30 tenían al menos un precio o medida distinto del escrito de memoria, y la "Tracer 9 GT" pasó a ser "Tracer 9 GT+", que es la versión que se vendió en EE. UU. en 2024. Lección: **los datos escritos de memoria, aunque parezcan exactos, hay que verificarlos.**
+- Precio: MSRP base en EE. UU. sin envío. Dos motos (Versys 650 y 890 Adventure) quedan con `priceUsd = null` porque no se encontró la cifra oficial; es mejor un dato vacío que uno inventado. La conversión a COP en tiempo real queda para la Fase 2.
+
+## Revisión de diseño (agente `clean-code-reviewer`)
+
+El revisor dio el veredicto "listo con sugerencias", sin hallazgos de gravedad alta. Se aplicaron: borrar las motos que salen del seed, límites de la transacción, la unión discriminada y una regex con caracteres invisibles (ahora `\p{M}`). También se añadió `tsx` a la tabla del stack. Queda para la Fase 2: ordenar por precio con null al final y desempate por `id`.
 
 ## Alternativas descartadas
 
