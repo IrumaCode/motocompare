@@ -86,7 +86,7 @@ export const typeDefs = /* GraphQL */ `
     "Matches any of the given categories. An empty list does not filter."
     categorySlugs: [String!]
     displacementCc: IntRange
-    "Excludes motorcycles without a price."
+    "When a bound is given, motorcycles without a price are excluded."
     priceUsd: IntRange
   }
 

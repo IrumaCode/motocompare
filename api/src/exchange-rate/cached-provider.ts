@@ -11,9 +11,10 @@ export interface CacheOptions {
 
 /**
  * Decorator that adds an in-memory cache to any provider:
- * - concurrent callers share a single in-flight request;
- * - when a refresh fails, the last known rate keeps being served (stale is better than nothing)
- *   and the source is not called again until `retryDelayMs` has passed.
+ * - only the very first call waits for the source; concurrent callers share that request;
+ * - after the TTL, the last known rate is served immediately while a refresh runs in the
+ *   background (it never rejects, because a cached rate exists to fall back on);
+ * - after a failed refresh, the source is not called again until `retryDelayMs` has passed.
  */
 export function withCache(
   provider: ExchangeRateProvider,
@@ -40,15 +41,16 @@ export function withCache(
 
   return {
     getUsdToCop() {
-      if (now() < nextRefreshAt) {
-        return cached
-          ? Promise.resolve(cached)
-          : Promise.reject(new Error('Exchange rate unavailable; waiting to retry'));
+      if (now() >= nextRefreshAt) {
+        inFlight ??= refresh().finally(() => {
+          inFlight = undefined;
+        });
       }
-      inFlight ??= refresh().finally(() => {
-        inFlight = undefined;
-      });
-      return inFlight;
+      // Stale-while-revalidate: once a rate exists, callers never wait for the refresh
+      if (cached) {
+        return Promise.resolve(cached);
+      }
+      return inFlight ?? Promise.reject(new Error('Exchange rate unavailable; waiting to retry'));
     },
   };
 }

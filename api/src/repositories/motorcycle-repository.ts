@@ -43,8 +43,11 @@ function toSlugFilter(slugs: readonly string[] | null | undefined) {
   return slugs?.length ? { slug: { in: [...slugs] } } : undefined;
 }
 
+/** A range without bounds means "do not filter" (so it does not exclude null prices either). */
 function toIntFilter(range: IntRange | null | undefined) {
-  return range ? { gte: range.min ?? undefined, lte: range.max ?? undefined } : undefined;
+  const gte = range?.min ?? undefined;
+  const lte = range?.max ?? undefined;
+  return gte === undefined && lte === undefined ? undefined : { gte, lte };
 }
 
 function toWhere(filter: MotorcycleFilter): Prisma.MotorcycleWhereInput {
