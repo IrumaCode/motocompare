@@ -7,7 +7,7 @@
 - **Tipos generados de punta a punta**: GraphQL Code Generator lee el esquema de la API y las queries de la web, y genera los tipos. Si una query pide un campo que no existe, falla el type-check.
 - **Sistema de diseño "Racing Dark"**: colores semánticos, tema claro y oscuro, tipografías Syncopate (títulos) e Inter (texto).
 - **Layout** (cabecera con botón de tema y pie), **rutas** con React Router (inicio y 404) y una **home** con estadísticas y las 6 motos más potentes, con datos reales.
-- **Estados de carga y error**: esqueletos mientras llegan los datos y un mensaje con botón "Reintentar" si la API no responde.
+- **Estados de carga y error**: esqueletos mientras llegan los datos; si la carga pasa de 3 s, un loader animado de una moto de carrera ("Calentando motores…"), y un mensaje con botón "Reintentar" si la API no responde.
 
 ## Cómo encaja todo
 
@@ -62,11 +62,22 @@ El veredicto fue "listo con sugerencias", sin hallazgos de gravedad alta.
 
 - **El tema pasó de un hook a un `ThemeProvider` con contexto.** Con el hook, cada componente que lo usaba guardaba su propia copia del tema. En la Fase 5, los gráficos no se habrían enterado del cambio que hace el botón. Ahora hay **una sola fuente de verdad**. Además, el provider lee el tema que ya fijó el script de `index.html` (la regla vive en un solo sitio) y sincroniza las pestañas abiertas con el evento `storage`.
 - **Carga accesible.** Un `aria-label` en un `<div>` genérico no tiene efecto. Ahora el esqueleto usa `role="status"` con un texto "Cargando motos…" solo para lectores de pantalla, y los bloques grises van con `aria-hidden`.
-- **Aviso de arranque en frío.** Si la carga dura más de 5 s, aparece "El servidor está despertando; la primera carga puede tardar hasta un minuto". Lo resuelve el hook `useSlowLoading`, reutilizable en el catálogo y el comparador.
+- **Aviso de arranque en frío.** Si la carga se alarga, aparece un aviso. Lo resuelve el hook `useSlowLoading`, reutilizable en el catálogo y el comparador. Después se mejoró (ver la sección siguiente).
 - **`VITE_API_URL=` vacío** se trata como no definido. Antes, las peticiones se habrían enviado a la propia página.
 - Los tipos de Vite se declaraban dos veces; quedó solo el archivo `vite-env.d.ts`.
 
 **Para la Fase 4:** la tarjeta enlazará al detalle con un enlace en el nombre que cubra toda la tarjeta (_stretched link_), y habrá que cuidar la jerarquía de títulos del catálogo.
+
+## Ajustes pedidos tras la revisión (con la skill UI/UX Pro Max)
+
+- **El tema es un interruptor (toggle switch).** Es un `<button role="switch" aria-checked>`: los lectores de pantalla anuncian "Modo oscuro, activado/desactivado". El botón mide 44 px de alto (área táctil cómoda), aunque el carril visible es más pequeño. La bolita roja se desliza con `motion-safe:transition-transform`, así que con "reducir movimiento" cambia sin animación.
+- **Loader "Calentando motores…".** Es una moto deportiva carenada con el piloto agachado, en SVG. Las ruedas giran, la moto rebota levemente, hay líneas de velocidad y la carretera se desplaza. Debajo, el texto "Espera unos segundos mientras llegan las motos…". Decisiones:
+  - **Dibujo original inspirado en una referencia, no calcado.** La imagen de referencia venía de un banco de fotos con marca de agua (tiene derechos de autor). Se tomó solo el estilo: silueta sólida, cortes "en negativo" que separan las piezas y ruedas gruesas. Los cortes se pintan con el color de la tarjeta (`stroke-surface`), así funcionan en los dos temas.
+  - **Solo aparece si la carga pasa de 3 s.** En una carga normal los esqueletos bastan; mostrar un loader que dura medio segundo sería un parpadeo molesto (pauta de la skill: no hacer parpadear indicadores en esperas casi instantáneas).
+  - **Solo se animan `transform`, `opacity` y `stroke-dashoffset`.** El navegador los resuelve sin recalcular el diseño de la página, así que la animación es fluida incluso en móviles modestos.
+  - **Las animaciones se definen como _tokens_** en `@theme` (`--animate-wheel-spin`...) y se aplican con `motion-safe:`. Con "reducir movimiento" activado, la moto se dibuja quieta y el mensaje basta.
+  - **`transform-box: fill-box`** hace que cada rueda gire sobre su propio centro y no sobre la esquina del SVG.
+  - El SVG es decorativo (`aria-hidden`); lo que leen los lectores de pantalla es el texto dentro de la región `role="status"`.
 
 ## Alternativas descartadas
 
