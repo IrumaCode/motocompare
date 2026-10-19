@@ -41,9 +41,10 @@
     }
   }
 
+  /* Offset = one dash period of the road line in ColdStartNotice (14 + 10), so the loop is seamless */
   @keyframes road {
     to {
-      stroke-dashoffset: -20;
+      stroke-dashoffset: -24;
     }
   }
 }
