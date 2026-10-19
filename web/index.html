@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Compara especificaciones, precios y prestaciones de motos lado a lado."
+    />
+    <title>MotoCompare · Compara motos lado a lado</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syncopate:wght@700&display=swap"
+    />
+
+    <script>
+      // Applies the theme before the first paint to avoid a light/dark flash.
+      // Keep the key in sync with THEME_STORAGE_KEY in src/app/theme/useTheme.ts
+      (function () {
+        var stored = null;
+        try {
+          stored = localStorage.getItem('motocompare-theme');
+        } catch (error) {
+          // Storage can be blocked (private mode); fall back to the system preference
+        }
+        var theme =
+          stored === 'light' || stored === 'dark'
+            ? stored
+            : matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
