@@ -6,5 +6,5 @@
     "types": ["node"],
     "noEmit": true
   },
-  "include": ["src", "prisma", "prisma.config.ts"]
+  "include": ["src", "prisma", "prisma.config.ts", "codegen.ts"]
 }
