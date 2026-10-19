@@ -4,7 +4,7 @@ Aplicación para comparar especificaciones de motocicletas: catálogo con filtro
 
 Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) construido por fases.
 
-> **Estado:** Fase 1, base de datos modelada con Prisma y poblada con 30 motos de 5 marcas. Aún no hay API ni interfaz.
+> **Estado:** Fase 2, API GraphQL con catálogo filtrable, detalle, comparador y precios en COP. Aún no hay interfaz.
 
 ## Stack
 
@@ -29,7 +29,20 @@ pnpm install                    # instala dependencias y genera el cliente de Pr
 docker compose up -d            # levanta PostgreSQL en segundo plano
 pnpm --filter api db:migrate    # aplica las migraciones
 pnpm --filter api db:seed       # carga las motos de ejemplo
+pnpm --filter api dev           # API y playground en http://localhost:4000/graphql
 ```
+
+## API
+
+GraphQL con estas queries:
+
+- `motorcycles`: catálogo con filtros por marca, categoría, cilindrada y precio; orden y paginación.
+- `motorcycle(slug)`: detalle de una moto.
+- `compare(slugs)`: de 2 a 4 motos.
+- `brands` y `categories`.
+- `exchangeRate`: tasa USD → COP.
+
+El campo `priceCop` convierte el precio con la TRM oficial del día, publicada por [datos.gov.co](https://www.datos.gov.co). Se guarda en caché 6 horas; si la fuente no responde, el campo queda vacío.
 
 ## Scripts
 
@@ -39,6 +52,8 @@ pnpm --filter api db:seed       # carga las motos de ejemplo
 | `pnpm typecheck`               | Comprueba los tipos en cada paquete            |
 | `pnpm format`                  | Formatea el código con Prettier                |
 | `pnpm format:check`            | Verifica el formato sin modificar archivos     |
+| `pnpm --filter api dev`        | Levanta la API y se reinicia al guardar        |
+| `pnpm --filter api codegen`    | Regenera los tipos de GraphQL                  |
 | `pnpm --filter api db:migrate` | Crea y aplica migraciones a partir del schema  |
 | `pnpm --filter api db:seed`    | Carga o actualiza los datos de ejemplo         |
 | `pnpm --filter api db:studio`  | Abre Prisma Studio para explorar la base       |
@@ -54,7 +69,12 @@ Las especificaciones de las motos (modelo 2024) se curaron a mano a partir de la
 motocompare/
 ├── api/
 │   ├── prisma/           # schema, migraciones y seed
-│   └── src/db/           # cliente de Prisma
+│   └── src/
+│       ├── graphql/        # esquema, resolvers y DataLoaders
+│       ├── services/       # reglas de negocio
+│       ├── repositories/   # acceso a datos con Prisma
+│       ├── exchange-rate/  # tasa USD → COP con caché
+│       └── db/             # cliente de Prisma
 ├── web/                  # App React
 ├── docs/aprendizaje/     # notas de aprendizaje por fase
 └── docker-compose.yml    # PostgreSQL local
