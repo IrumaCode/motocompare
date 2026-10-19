@@ -33,8 +33,9 @@ const GRID_CLASSES = 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3';
 
 function HomeSkeleton({ isSlow }: { isSlow: boolean }) {
   return (
-    // role="status" makes screen readers announce the text inside it
-    <div role="status" aria-busy="true" className="flex flex-col gap-10">
+    // role="status" makes screen readers announce the text inside it. No aria-busy here:
+    // some screen readers stay silent on a busy region until it stops being busy.
+    <div role="status" className="flex flex-col gap-10">
       {isSlow ? <ColdStartNotice /> : <span className="sr-only">Cargando motos…</span>}
       <div aria-hidden="true" className="flex flex-col gap-10">
         <StatsStripSkeleton />
@@ -80,7 +81,7 @@ function HomeContent() {
   if (error && !loading) {
     return (
       <ErrorState
-        message="No pudimos cargar las motos. Revisa tu conexión e inténtalo de nuevo."
+        message="No pudimos cargar las motos. Inténtalo de nuevo en unos segundos."
         onRetry={() => void refetch()}
       />
     );
