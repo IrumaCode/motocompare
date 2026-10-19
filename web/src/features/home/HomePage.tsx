@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { graphql } from '../../generated/graphql';
+import { useSlowLoading } from '../../lib/use-slow-loading';
 import { MotorcycleCard } from '../motorcycles/MotorcycleCard';
 import { MotorcycleCardSkeleton } from '../motorcycles/MotorcycleCardSkeleton';
 import { HomeHero } from './HomeHero';
@@ -29,14 +30,24 @@ const homePageQuery = graphql(`
 
 const GRID_CLASSES = 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3';
 
-function HomeSkeleton() {
+function HomeSkeleton({ isSlow }: { isSlow: boolean }) {
   return (
-    <div aria-busy="true" aria-label="Cargando motos" className="flex flex-col gap-10">
-      <StatsStripSkeleton />
-      <div className={GRID_CLASSES}>
-        {Array.from({ length: FEATURED_COUNT }, (_, index) => (
-          <MotorcycleCardSkeleton key={index} />
-        ))}
+    // role="status" makes screen readers announce the text inside it
+    <div role="status" aria-busy="true" className="flex flex-col gap-10">
+      {isSlow ? (
+        <p className="text-ink-muted">
+          El servidor está despertando; la primera carga puede tardar hasta un minuto.
+        </p>
+      ) : (
+        <span className="sr-only">Cargando motos…</span>
+      )}
+      <div aria-hidden="true" className="flex flex-col gap-10">
+        <StatsStripSkeleton />
+        <div className={GRID_CLASSES}>
+          {Array.from({ length: FEATURED_COUNT }, (_, index) => (
+            <MotorcycleCardSkeleton key={index} />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -46,6 +57,7 @@ function HomeContent() {
   const { data, loading, error, refetch } = useQuery(homePageQuery, {
     variables: { featuredCount: FEATURED_COUNT },
   });
+  const isSlow = useSlowLoading(loading && !data);
 
   if (data) {
     return (
@@ -80,7 +92,7 @@ function HomeContent() {
   }
 
   // First load can be slow when the API or the database are waking up
-  return <HomeSkeleton />;
+  return <HomeSkeleton isSlow={isSlow} />;
 }
 
 export function HomePage() {
