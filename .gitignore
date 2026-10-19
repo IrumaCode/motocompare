@@ -6,8 +6,9 @@ dist/
 build/
 *.tsbuildinfo
 
-# Generated code (recreate with `pnpm --filter api db:generate`)
+# Generated code (recreated by `pnpm install`: Prisma client and GraphQL types)
 api/src/generated/
+web/src/generated/
 
 # Environment variables (only .env.example is committed)
 .env

@@ -1,5 +1,7 @@
 import js from '@eslint/js';
 import prettierConfig from 'eslint-config-prettier';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
@@ -17,6 +19,12 @@ export default defineConfig(
         tsconfigRootDir: import.meta.dirname,
       },
     },
+  },
+
+  // React app: rules of hooks, and only components exported from .tsx (keeps Fast Refresh working)
+  {
+    files: ['web/**/*.{ts,tsx}'],
+    extends: [reactHooks.configs.flat.recommended, reactRefresh.configs.vite],
   },
 
   // Plain JS config files are not part of any tsconfig, so skip type-aware rules there
