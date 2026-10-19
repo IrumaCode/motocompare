@@ -4,14 +4,14 @@ Aplicación para comparar especificaciones de motocicletas: catálogo con filtro
 
 Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) construido por fases.
 
-> **Estado:** Fase 2, API GraphQL con catálogo filtrable, detalle, comparador y precios en COP. Aún no hay interfaz.
+> **Estado:** Fase 3, web en React conectada a la API: inicio con estadísticas y las motos más potentes, tema claro y oscuro. El catálogo con filtros y el comparador llegan en las próximas fases.
 
 ## Stack
 
 - **Monorepo:** pnpm workspaces (`api/` y `web/`)
 - **Lenguaje:** TypeScript estricto
 - **API:** Node.js + GraphQL Yoga + Prisma 7 + PostgreSQL
-- **Web:** React + Vite + Tailwind CSS + Chart.js
+- **Web:** React + Vite + Tailwind CSS + Apollo Client + React Router (Chart.js en el comparador)
 - **Calidad:** ESLint, Prettier, Vitest
 - **Infra local:** Docker Compose (PostgreSQL 18)
 
@@ -25,11 +25,12 @@ Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) constru
 
 ```bash
 cp .env.example .env            # variables de entorno locales
-pnpm install                    # instala dependencias y genera el cliente de Prisma
+pnpm install                    # instala dependencias y genera el cliente de Prisma y los tipos GraphQL
 docker compose up -d            # levanta PostgreSQL en segundo plano
 pnpm --filter api db:migrate    # aplica las migraciones
 pnpm --filter api db:seed       # carga las motos de ejemplo
 pnpm --filter api dev           # API y playground en http://localhost:4000/graphql
+pnpm --filter web dev           # web en http://localhost:5173 (en otra terminal)
 ```
 
 ## API
@@ -53,7 +54,10 @@ El campo `priceCop` convierte el precio con la TRM oficial del día, publicada p
 | `pnpm format`                  | Formatea el código con Prettier                |
 | `pnpm format:check`            | Verifica el formato sin modificar archivos     |
 | `pnpm --filter api dev`        | Levanta la API y se reinicia al guardar        |
-| `pnpm --filter api codegen`    | Regenera los tipos de GraphQL                  |
+| `pnpm --filter api codegen`    | Regenera los tipos de GraphQL de la API        |
+| `pnpm --filter web dev`        | Levanta la web con recarga en caliente         |
+| `pnpm --filter web codegen`    | Regenera los tipos de las queries de la web    |
+| `pnpm --filter web build`      | Genera el build de producción en `web/dist`    |
 | `pnpm --filter api db:migrate` | Crea y aplica migraciones a partir del schema  |
 | `pnpm --filter api db:seed`    | Carga o actualiza los datos de ejemplo         |
 | `pnpm --filter api db:studio`  | Abre Prisma Studio para explorar la base       |
@@ -75,7 +79,11 @@ motocompare/
 │       ├── repositories/   # acceso a datos con Prisma
 │       ├── exchange-rate/  # tasa USD → COP con caché
 │       └── db/             # cliente de Prisma
-├── web/                  # App React
+├── web/src/
+│   ├── app/              # rutas, layout y tema
+│   ├── features/         # páginas y piezas por funcionalidad
+│   ├── components/ui/    # componentes genéricos
+│   └── lib/              # cliente Apollo y utilidades
 ├── docs/aprendizaje/     # notas de aprendizaje por fase
 └── docker-compose.yml    # PostgreSQL local
 ```
