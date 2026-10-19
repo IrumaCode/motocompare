@@ -4,6 +4,48 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   /* Wide display face: only for the brand and short headings */
   --font-display: 'Syncopate', 'Inter', ui-sans-serif, sans-serif;
+
+  /* Racing loader (ColdStartNotice). Always used with motion-safe: */
+  --animate-wheel-spin: wheel-spin 0.5s linear infinite;
+  --animate-ride-bounce: ride-bounce 0.35s ease-in-out infinite;
+  --animate-speed-line: speed-line 0.7s linear infinite;
+  --animate-road: road 0.4s linear infinite;
+
+  @keyframes wheel-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes ride-bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-1.5px);
+    }
+  }
+
+  @keyframes speed-line {
+    0% {
+      transform: translateX(10px);
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-22px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes road {
+    to {
+      stroke-dashoffset: -20;
+    }
+  }
 }
 
 /* Semantic colors. Components use these names (bg-surface, text-ink...), never raw hex,

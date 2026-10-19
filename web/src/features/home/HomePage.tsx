@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client/react';
+import { ColdStartNotice } from '../../components/ColdStartNotice';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { graphql } from '../../generated/graphql';
 import { useSlowLoading } from '../../lib/use-slow-loading';
@@ -34,13 +35,7 @@ function HomeSkeleton({ isSlow }: { isSlow: boolean }) {
   return (
     // role="status" makes screen readers announce the text inside it
     <div role="status" aria-busy="true" className="flex flex-col gap-10">
-      {isSlow ? (
-        <p className="text-ink-muted">
-          El servidor está despertando; la primera carga puede tardar hasta un minuto.
-        </p>
-      ) : (
-        <span className="sr-only">Cargando motos…</span>
-      )}
+      {isSlow ? <ColdStartNotice /> : <span className="sr-only">Cargando motos…</span>}
       <div aria-hidden="true" className="flex flex-col gap-10">
         <StatsStripSkeleton />
         <div className={GRID_CLASSES}>
@@ -85,7 +80,7 @@ function HomeContent() {
   if (error && !loading) {
     return (
       <ErrorState
-        message="No pudimos cargar las motos. Si el servidor estaba dormido, puede tardar unos segundos en despertar."
+        message="No pudimos cargar las motos. Revisa tu conexión e inténtalo de nuevo."
         onRetry={() => void refetch()}
       />
     );

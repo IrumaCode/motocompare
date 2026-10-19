@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-const DEFAULT_THRESHOLD_MS = 5_000;
+// Short enough to reassure on a cold start, long enough not to flash on normal loads
+const DEFAULT_THRESHOLD_MS = 3_000;
 
 /**
  * True once `isLoading` has lasted longer than `thresholdMs`. Used to explain long waits
