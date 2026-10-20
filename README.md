@@ -4,7 +4,7 @@ Aplicación para comparar especificaciones de motocicletas: catálogo con filtro
 
 Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) construido por fases.
 
-> **Estado:** Fase 5, comparador de 2 a 4 motos: se eligen con un botón o arrastrándolas a una bandeja (también con teclado), y la página `/comparar` muestra una carrera de potencia por kilo, gráficos de radar y barras, y la ficha técnica lado a lado. El enlace de cada comparación se puede compartir.
+> **Estado:** Fase 6, pruebas automáticas con Vitest y Testing Library: servicios y queries GraphQL de la API, consultas de Prisma contra una base de datos de prueba, y los flujos principales de la web (catálogo, ficha, bandeja y comparador). La fase anterior añadió el comparador de 2 a 4 motos con gráficos.
 
 ## Stack
 
@@ -12,7 +12,7 @@ Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) constru
 - **Lenguaje:** TypeScript estricto
 - **API:** Node.js + GraphQL Yoga + Prisma 7 + PostgreSQL
 - **Web:** React + Vite + Tailwind CSS + Apollo Client + React Router, Chart.js (gráficos) y dnd-kit (arrastrar y soltar)
-- **Calidad:** ESLint, Prettier, Vitest
+- **Calidad:** ESLint, Prettier, Vitest + Testing Library (jsdom)
 - **Infra local:** Docker Compose (PostgreSQL 18)
 
 ## Requisitos
@@ -47,21 +47,28 @@ El campo `priceCop` convierte el precio con la TRM oficial del día, publicada p
 
 ## Scripts
 
-| Comando                        | Qué hace                                       |
-| ------------------------------ | ---------------------------------------------- |
-| `pnpm lint`                    | Revisa el código con ESLint                    |
-| `pnpm typecheck`               | Comprueba los tipos en cada paquete            |
-| `pnpm format`                  | Formatea el código con Prettier                |
-| `pnpm format:check`            | Verifica el formato sin modificar archivos     |
-| `pnpm --filter api dev`        | Levanta la API y se reinicia al guardar        |
-| `pnpm --filter api codegen`    | Regenera los tipos de GraphQL de la API        |
-| `pnpm --filter web dev`        | Levanta la web con recarga en caliente         |
-| `pnpm --filter web codegen`    | Regenera los tipos de las queries de la web    |
-| `pnpm --filter web build`      | Genera el build de producción en `web/dist`    |
-| `pnpm --filter api db:migrate` | Crea y aplica migraciones a partir del schema  |
-| `pnpm --filter api db:seed`    | Carga o actualiza los datos de ejemplo         |
-| `pnpm --filter api db:studio`  | Abre Prisma Studio para explorar la base       |
-| `pnpm --filter api db:reset`   | Borra la base y reaplica todas las migraciones |
+| Comando                        | Qué hace                                        |
+| ------------------------------ | ----------------------------------------------- |
+| `pnpm lint`                    | Revisa el código con ESLint                     |
+| `pnpm typecheck`               | Comprueba los tipos en cada paquete             |
+| `pnpm format`                  | Formatea el código con Prettier                 |
+| `pnpm format:check`            | Verifica el formato sin modificar archivos      |
+| `pnpm test`                    | Corre las pruebas de la API y de la web         |
+| `pnpm test:db`                 | Prueba las consultas contra PostgreSQL (Docker) |
+| `pnpm --filter api dev`        | Levanta la API y se reinicia al guardar         |
+| `pnpm --filter api codegen`    | Regenera los tipos de GraphQL de la API         |
+| `pnpm --filter web dev`        | Levanta la web con recarga en caliente          |
+| `pnpm --filter web codegen`    | Regenera los tipos de las queries de la web     |
+| `pnpm --filter web build`      | Genera el build de producción en `web/dist`     |
+| `pnpm --filter api db:migrate` | Crea y aplica migraciones a partir del schema   |
+| `pnpm --filter api db:seed`    | Carga o actualiza los datos de ejemplo          |
+| `pnpm --filter api db:studio`  | Abre Prisma Studio para explorar la base        |
+| `pnpm --filter api db:reset`   | Borra la base y reaplica todas las migraciones  |
+
+## Pruebas
+
+- `pnpm test` no necesita base de datos ni red. La API se prueba con repositorios en memoria y queries GraphQL de punta a punta; la web, con Testing Library sobre un DOM simulado (jsdom) y Apollo simulado.
+- `pnpm test:db` prueba las consultas de Prisma contra la base `motocompare_test` (variable `TEST_DATABASE_URL`, ver `.env.example`). Necesita `docker compose up -d`, aplica las migraciones y vacía sus tablas en cada ejecución: por seguridad, se niega a correr si el nombre de la base no termina en `_test`.
 
 ## Datos
 
