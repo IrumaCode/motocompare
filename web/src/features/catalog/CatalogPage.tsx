@@ -9,7 +9,7 @@ import { useSlowLoading } from '../../lib/use-slow-loading';
 import { ComparableMotorcycleCard } from '../comparison/ComparableMotorcycleCard';
 import { MotorcycleCardSkeleton } from '../motorcycles/MotorcycleCardSkeleton';
 import { CatalogEmptyState } from './CatalogEmptyState';
-import { catalogQuery, filterOptionsQuery } from './catalog-queries';
+import { CATALOG_PAGE_SIZE, catalogQuery, filterOptionsQuery } from './catalog-queries';
 import { CatalogFilters } from './CatalogFilters';
 import { SORT_OPTIONS, type SortOptionId } from './catalog-presets';
 import {
@@ -23,7 +23,6 @@ import { FiltersDialog } from './FiltersDialog';
 import { Pagination } from './Pagination';
 import { useCatalogParams } from './use-catalog-params';
 
-const PAGE_SIZE = 12;
 const GRID_CLASSES = 'grid gap-4 sm:grid-cols-2 xl:grid-cols-3';
 
 function isSortOptionId(value: string): value is SortOptionId {
@@ -49,7 +48,7 @@ export function CatalogPage() {
 
   const filterOptions = useQuery(filterOptionsQuery);
   const { data, previousData, loading, error, refetch } = useQuery(catalogQuery, {
-    variables: toMotorcyclesVariables(params, PAGE_SIZE),
+    variables: toMotorcyclesVariables(params, CATALOG_PAGE_SIZE),
   });
   // While new results load, keep showing the previous ones instead of flashing a skeleton
   const results = (data ?? previousData)?.motorcycles;
@@ -67,7 +66,7 @@ export function CatalogPage() {
   }, [params.page]);
 
   const activeFilters = countActiveFilters(params);
-  const totalPages = results ? Math.ceil(results.totalCount / PAGE_SIZE) : 0;
+  const totalPages = results ? Math.ceil(results.totalCount / CATALOG_PAGE_SIZE) : 0;
   const clearFilters = () => {
     setParams(withFilters(params, NO_FILTERS));
   };
