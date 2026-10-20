@@ -61,6 +61,10 @@
   --color-accent: var(--accent);
   --color-on-accent: var(--on-accent);
   --color-accent-ink: var(--accent-ink);
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
 }
 
 /* "Racing Dark": slate base with an action red. Contrast checked against WCAG AA. */
@@ -77,6 +81,12 @@
   --on-accent: #ffffff;
   /* Red used as text on dark backgrounds (#dc2626 would only reach 3.7:1) */
   --accent-ink: #f87171;
+  /* One color per compared motorcycle (charts, race, markers). Each one passes 3:1 against
+     the surface; the shapes of the markers keep them apart without relying on color. */
+  --series-1: #f87171;
+  --series-2: #38bdf8;
+  --series-3: #fbbf24;
+  --series-4: #a78bfa;
 }
 
 :root[data-theme='light'] {
@@ -89,6 +99,10 @@
   --accent: #dc2626;
   --on-accent: #ffffff;
   --accent-ink: #b91c1c;
+  --series-1: #dc2626;
+  --series-2: #0284c7;
+  --series-3: #b45309;
+  --series-4: #7c3aed;
 }
 
 @layer base {
