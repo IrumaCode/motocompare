@@ -1,0 +1,11 @@
+<!-- Same drawing as MotoIllustration variant="mark", with fixed colors on a dark tile -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#0f172a"/>
+  <g transform="translate(0 12)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="13" cy="29" r="7.5" stroke-width="5" stroke="#f8fafc"/>
+    <circle cx="51" cy="29" r="7.5" stroke-width="5" stroke="#f8fafc"/>
+    <path d="M3 13 25 19l6-3q7-4 15-2l15 10q-2 4-8 3H35l-9 4-6-6Z" fill="#dc2626"/>
+    <path d="M26 18q4-8 14-8" stroke-width="5" stroke="#f8fafc"/>
+    <circle cx="44" cy="8" r="5" fill="#f8fafc"/>
+  </g>
+</svg>
