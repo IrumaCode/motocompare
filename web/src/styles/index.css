@@ -41,6 +41,26 @@
     }
   }
 
+  /* hp/kg race (PowerToWeightRace). Only the start is declared: the end state is the element's
+     own translate/scale, so every lane reuses the keyframes with its own distance. Same duration
+     for all lanes, so the stronger motorcycles visibly move faster. Always used with motion-safe:
+     They animate the individual `translate` and `scale` properties (not `transform`), the same
+     ones Tailwind v4 utilities set, so they compose with classes like -translate-y-1/2. */
+  --animate-race: race 1.8s cubic-bezier(0.3, 0.7, 0.2, 1) both;
+  --animate-race-trail: race-trail 1.8s cubic-bezier(0.3, 0.7, 0.2, 1) both;
+
+  @keyframes race {
+    from {
+      translate: 0 0;
+    }
+  }
+
+  @keyframes race-trail {
+    from {
+      scale: 0 1;
+    }
+  }
+
   /* Offset = one dash period of the road line in ColdStartNotice (14 + 10), so the loop is seamless */
   @keyframes road {
     to {
