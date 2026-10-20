@@ -17,6 +17,8 @@ export interface MotorcycleRepository {
   findMany(query: MotorcycleQuery): Promise<{ items: Motorcycle[]; totalCount: number }>;
   findBySlug(slug: string): Promise<Motorcycle | null>;
   findBySlugs(slugs: readonly string[]): Promise<Motorcycle[]>;
+  /** Power of every motorcycle in the catalog, in no particular order. */
+  listPowerHp(): Promise<number[]>;
 }
 
 type OrderBy = Prisma.MotorcycleOrderByWithRelationInput;
@@ -76,6 +78,11 @@ export function createMotorcycleRepository(prisma: PrismaClient): MotorcycleRepo
 
     findBySlugs(slugs) {
       return prisma.motorcycle.findMany({ where: { slug: { in: [...slugs] } } });
+    },
+
+    async listPowerHp() {
+      const rows = await prisma.motorcycle.findMany({ select: { powerHp: true } });
+      return rows.map((row) => row.powerHp);
     },
   };
 }

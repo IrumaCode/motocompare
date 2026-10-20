@@ -26,6 +26,21 @@ export interface MotorcycleService {
   search(search: MotorcycleSearch): Promise<MotorcyclePage>;
   findBySlug(slug: string): Promise<Motorcycle | null>;
   compare(slugs: readonly string[]): Promise<Motorcycle[]>;
+  /** For each power value, the percentile it reaches in the catalog (see percentileBelow). */
+  powerPercentiles(powersHp: readonly number[]): Promise<number[]>;
+}
+
+/**
+ * Share (0-100) of the *other* catalog values that are strictly lower than `value`.
+ * `values` includes the motorcycle itself, so the most powerful one gets 100.
+ */
+export function percentileBelow(values: readonly number[], value: number): number {
+  const others = values.length - 1;
+  if (others <= 0) {
+    return 100;
+  }
+  const below = values.filter((other) => other < value).length;
+  return (below / others) * 100;
 }
 
 function assertValidRange(name: string, range: IntRange | null | undefined): void {
@@ -91,6 +106,11 @@ export function createMotorcycleService(repository: MotorcycleRepository): Motor
       }
       // Keep the order the client asked for (columns of the comparison table)
       return slugs.map((slug) => found.get(slug)).filter((motorcycle) => motorcycle !== undefined);
+    },
+
+    async powerPercentiles(powersHp) {
+      const catalogPowers = await repository.listPowerHp();
+      return powersHp.map((powerHp) => percentileBelow(catalogPowers, powerHp));
     },
   };
 }

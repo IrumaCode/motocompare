@@ -55,7 +55,10 @@ export function createApp({ prisma }: AppDependencies): YogaServerInstance<objec
 
   return createYoga<object, GraphQLContext>({
     schema: createSchema<GraphQLContext>({ typeDefs, resolvers }),
-    context: () => ({ services, loaders: createLoaders(catalogRepository) }),
+    context: () => ({
+      services,
+      loaders: createLoaders({ catalog: catalogRepository, motorcycles: services.motorcycles }),
+    }),
     maskedErrors: { maskError: exposeInputErrors },
   });
 }

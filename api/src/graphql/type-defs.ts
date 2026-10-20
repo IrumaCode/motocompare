@@ -50,6 +50,22 @@ export const typeDefs = /* GraphQL */ `
     weightKg: Int!
     seatHeightMm: Int!
     fuelCapacityL: Float!
+    "Freely licensed photo; null when the catalog has none for this model."
+    image: MotorcycleImage
+    "Share (0-100) of the other catalog motorcycles with less power; the most powerful gets 100."
+    powerPercentile: Float!
+  }
+
+  "Photo plus the credit its license requires."
+  type MotorcycleImage {
+    "Path relative to the web app origin, e.g. /motos/yamaha-mt-07-2024.webp"
+    url: String!
+    author: String!
+    "Short license name, e.g. CC BY-SA 4.0."
+    license: String!
+    licenseUrl: String!
+    "Page of the original file (Wikimedia Commons)."
+    sourceUrl: String!
   }
 
   type Brand {
