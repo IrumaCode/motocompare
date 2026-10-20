@@ -5,6 +5,8 @@
 export const COMPARE_MIN = 2;
 export const COMPARE_MAX = 4;
 
+export const FULL_TRAY_MESSAGE = `La comparación ya tiene ${String(COMPARE_MAX)} motos. Quita una para añadir otra.`;
+
 export const COMPARE_PATH = '/comparar';
 /** Repeated key (?moto=a&moto=b), like the catalog filters: getAll() keeps the order. */
 export const COMPARE_PARAM = 'moto';

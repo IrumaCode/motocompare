@@ -1,9 +1,11 @@
+import { useDroppable } from '@dnd-kit/core';
 import { ArrowRightIcon, TrashIcon, XIcon } from '@phosphor-icons/react';
 import { Link, useMatch } from 'react-router';
 import { MotoIllustration } from '../../components/MotoIllustration';
 import { Button } from '../../components/ui/Button';
 import { buttonClassName } from '../../components/ui/button-styles';
 import { useComparison } from './comparison-context';
+import { TRAY_DROP_ID } from './comparison-dnd';
 import {
   COMPARE_MAX,
   COMPARE_MIN,
@@ -34,7 +36,7 @@ function EmptySlot() {
   return (
     <li
       aria-hidden="true"
-      className="hidden h-11 w-28 shrink-0 rounded-full border-2 border-dashed border-line sm:block"
+      className="hidden h-11 w-16 shrink-0 rounded-full border-2 border-dashed border-line sm:block"
     />
   );
 }
@@ -46,8 +48,11 @@ function EmptySlot() {
 export function ComparisonTray() {
   const { items, remove, clear } = useComparison();
   const onComparePage = useMatch(COMPARE_PATH) !== null;
+  const { setNodeRef, isOver, active } = useDroppable({ id: TRAY_DROP_ID });
+  const isDragging = active !== null;
 
-  if (items.length === 0 || onComparePage) {
+  // While a card is being dragged the tray also shows when empty: it is the drop zone
+  if ((items.length === 0 && !isDragging) || onComparePage) {
     return null;
   }
 
@@ -56,9 +61,14 @@ export function ComparisonTray() {
 
   return (
     <aside
+      ref={setNodeRef}
       aria-label="Bandeja de comparación"
       data-comparison-tray
-      className="sticky bottom-0 z-10 border-t border-line bg-canvas/95 backdrop-blur"
+      className={`sticky bottom-0 z-10 border-t backdrop-blur transition-colors duration-200 ${
+        isOver
+          ? 'border-accent bg-surface/95 ring-2 ring-accent ring-inset'
+          : 'border-line bg-canvas/95'
+      }`}
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:gap-4 sm:px-6">
         {/* Phones: counter and buttons share the first row, chips scroll below.
@@ -111,10 +121,14 @@ export function ComparisonTray() {
             <EmptySlot key={index} />
           ))}
         </ul>
-        {!canCompare && (
-          <p id="tray-hint" className="text-xs text-ink-muted">
-            Añade al menos {COMPARE_MIN} motos para compararlas.
-          </p>
+        {isDragging ? (
+          <p className="text-sm font-semibold text-accent-ink">Suelta aquí para compararla</p>
+        ) : (
+          !canCompare && (
+            <p id="tray-hint" className="text-xs text-ink-muted">
+              Añade al menos {COMPARE_MIN} motos para compararlas.
+            </p>
+          )
         )}
       </div>
     </aside>
