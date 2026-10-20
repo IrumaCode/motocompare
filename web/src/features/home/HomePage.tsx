@@ -3,7 +3,7 @@ import { ColdStartNotice } from '../../components/ColdStartNotice';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { graphql } from '../../generated/graphql';
 import { useSlowLoading } from '../../lib/use-slow-loading';
-import { MotorcycleCard } from '../motorcycles/MotorcycleCard';
+import { ComparableMotorcycleCard } from '../comparison/ComparableMotorcycleCard';
 import { MotorcycleCardSkeleton } from '../motorcycles/MotorcycleCardSkeleton';
 import { HomeHero } from './HomeHero';
 import { StatsStrip, StatsStripSkeleton } from './StatsStrip';
@@ -69,7 +69,7 @@ function HomeContent() {
           </h2>
           <div className={GRID_CLASSES}>
             {data.motorcycles.items.map((motorcycle) => (
-              <MotorcycleCard key={motorcycle.id} motorcycle={motorcycle} />
+              <ComparableMotorcycleCard key={motorcycle.id} motorcycle={motorcycle} />
             ))}
           </div>
         </section>

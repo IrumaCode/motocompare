@@ -7,7 +7,7 @@ import { ErrorState } from '../../components/ui/ErrorState';
 import { graphql } from '../../generated/graphql';
 import { pluralize } from '../../lib/format';
 import { useSlowLoading } from '../../lib/use-slow-loading';
-import { MotorcycleCard } from '../motorcycles/MotorcycleCard';
+import { ComparableMotorcycleCard } from '../comparison/ComparableMotorcycleCard';
 import { MotorcycleCardSkeleton } from '../motorcycles/MotorcycleCardSkeleton';
 import { CatalogEmptyState } from './CatalogEmptyState';
 import { CatalogFilters } from './CatalogFilters';
@@ -157,7 +157,7 @@ export function CatalogPage() {
           className={`${GRID_CLASSES} transition-opacity duration-200 ${loading ? 'opacity-60' : ''}`}
         >
           {results.items.map((motorcycle) => (
-            <MotorcycleCard key={motorcycle.id} motorcycle={motorcycle} />
+            <ComparableMotorcycleCard key={motorcycle.id} motorcycle={motorcycle} />
           ))}
         </div>
         <Pagination
