@@ -30,6 +30,8 @@ export default defineConfig({
           name: 'integration',
           include: [INTEGRATION_TESTS],
           globalSetup: ['src/test/integration-setup.ts'],
+          // Every file empties the same tables: run them one at a time, never in parallel
+          fileParallelism: false,
         },
       },
     ],

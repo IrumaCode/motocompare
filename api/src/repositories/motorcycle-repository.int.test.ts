@@ -5,9 +5,9 @@ import { honda, motorcycleFixture, naked, yamaha } from '../test/fakes.js';
 import { testDatabaseUrl } from '../test/test-database.js';
 import { createMotorcycleRepository } from './motorcycle-repository.js';
 
-// Integration tests: the real Prisma queries against PostgreSQL (database wiped and migrated by
-// integration-setup.ts). They cover what the in-memory fakes cannot: SQL filters, null
-// ordering and the id tie-break that keeps pages stable.
+// Integration tests: the real Prisma queries against PostgreSQL (schema migrated by
+// integration-setup.ts, tables emptied in beforeAll below). They cover what the in-memory fakes
+// cannot: SQL filters, null ordering and the id tie-break that keeps pages stable.
 
 const prisma = createPrismaClient(testDatabaseUrl());
 const repository = createMotorcycleRepository(prisma);

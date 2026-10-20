@@ -17,8 +17,11 @@ export function testDatabaseUrl(): string {
   if (!url) {
     throw new Error('TEST_DATABASE_URL is not set (see .env.example)');
   }
+  if (url === process.env.DATABASE_URL) {
+    throw new Error('TEST_DATABASE_URL must point to a different database than DATABASE_URL');
+  }
   const databaseName = new URL(url).pathname.slice(1);
-  if (!databaseName.endsWith('_test') || url === process.env.DATABASE_URL) {
+  if (!databaseName.endsWith('_test')) {
     throw new Error(
       `Refusing to run integration tests on "${databaseName}": its name must end in "_test"`,
     );

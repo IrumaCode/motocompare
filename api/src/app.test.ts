@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { createApp, type AppDependencies } from './app.js';
+import { createApp } from './app.js';
+import type { ExchangeRateProvider } from './exchange-rate/exchange-rate-provider.js';
 import type { Motorcycle } from './generated/prisma/client.js';
+import type { MotorcycleRepository } from './repositories/motorcycle-repository.js';
 import {
   createFakeCatalogRepository,
   createFakeMotorcycleRepository,
   fakeExchangeRateProvider,
   honda,
   motorcycleFixture,
-  type FakeCatalogRepository,
 } from './test/fakes.js';
 
 // Black-box tests: real schema, resolvers, services, loaders and error masking, driven through
@@ -28,14 +29,20 @@ const cb650r = motorcycleFixture({
 });
 const noPrice = motorcycleFixture({ id: 3, slug: 'yamaha-xsr-2024', name: 'XSR', priceUsd: null });
 
-function appWith(overrides: Partial<AppDependencies> = {}, motorcycles = [mt07, cb650r, noPrice]) {
-  const catalogRepository: FakeCatalogRepository = createFakeCatalogRepository();
-  const app = createApp({
-    motorcycleRepository: createFakeMotorcycleRepository(motorcycles),
-    catalogRepository,
-    exchangeRateProvider: fakeExchangeRateProvider(),
-    ...overrides,
-  });
+interface TestAppOptions {
+  /** Rows of the fake database (used when no motorcycleRepository is given) */
+  motorcycles?: readonly Motorcycle[];
+  motorcycleRepository?: MotorcycleRepository;
+  exchangeRateProvider?: ExchangeRateProvider;
+}
+
+function appWith({
+  motorcycles = [mt07, cb650r, noPrice],
+  motorcycleRepository = createFakeMotorcycleRepository(motorcycles),
+  exchangeRateProvider = fakeExchangeRateProvider(),
+}: TestAppOptions = {}) {
+  const catalogRepository = createFakeCatalogRepository();
+  const app = createApp({ motorcycleRepository, catalogRepository, exchangeRateProvider });
 
   async function query<TData>(source: string, variables?: Record<string, unknown>) {
     const response = await app.fetch('http://test/graphql', {
@@ -133,7 +140,7 @@ describe('GraphQL API', () => {
 
   it('exposes the photo credit only when it is complete', async () => {
     const incomplete: Motorcycle = { ...cb650r, imageAuthor: null };
-    const { query } = appWith({}, [mt07, incomplete]);
+    const { query } = appWith({ motorcycles: [mt07, incomplete] });
 
     const { data } = await query<{ compare: { image: { url: string; license: string } | null }[] }>(
       '{ compare(slugs: ["yamaha-mt-07-2024", "honda-cb650r-2024"]) { image { url license } } }',

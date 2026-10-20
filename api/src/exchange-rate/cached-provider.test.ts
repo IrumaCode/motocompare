@@ -42,14 +42,17 @@ function setup() {
     },
   };
   let time = 0;
+  const logger = { warn: vi.fn() };
   const cached = withCache(source, {
     ttlMs: TTL_MS,
     retryDelayMs: RETRY_DELAY_MS,
-    logger: { warn: vi.fn() },
+    logger,
     now: () => time,
   });
   return {
     cached,
+    /** Called when a refresh fails: the moment the cache has scheduled its retry. */
+    warn: logger.warn,
     calls: () => pending.length,
     /** Settles the latest request to the source. */
     answer: (value: ExchangeRate | Error) => {
@@ -106,15 +109,16 @@ describe('withCache', () => {
   });
 
   it('keeps the old rate when a refresh fails and waits before retrying', async () => {
-    const { cached, calls, answer, advance } = setup();
+    const { cached, calls, answer, advance, warn } = setup();
     const first = cached.getUsdToCop();
     answer(rate(4000));
     await first;
     advance(TTL_MS);
     await cached.getUsdToCop();
     answer(new Error('source down'));
+    // The background refresh settles asynchronously: wait until the failure was handled
     await vi.waitFor(() => {
-      expect(calls()).toBe(2);
+      expect(warn).toHaveBeenCalledOnce();
     });
 
     advance(RETRY_DELAY_MS - 1);

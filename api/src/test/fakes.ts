@@ -80,7 +80,7 @@ export function createFakeMotorcycleRepository(
 }
 
 export interface FakeCatalogRepository extends CatalogRepository {
-  /** How many times brands were fetched by id (DataLoader should batch them into one). */
+  /** Each batch of ids passed to findBrandsByIds (DataLoader should send a single batch). */
   readonly brandLookups: (readonly number[])[];
 }
 
