@@ -7,6 +7,7 @@ import { ErrorState } from '../../components/ui/ErrorState';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { formatCop, formatUsd } from '../../lib/format';
 import { useSlowLoading } from '../../lib/use-slow-loading';
+import { CompareToggle } from '../comparison/CompareToggle';
 import { MotorcyclePhoto } from '../motorcycles/MotorcyclePhoto';
 import { KeyFigures } from './KeyFigures';
 import { motorcycleDetailQuery, type MotorcycleDetail } from './motorcycle-detail-query';
@@ -58,16 +59,25 @@ function DetailContent({ motorcycle }: { motorcycle: MotorcycleDetail }) {
   return (
     <article className="flex flex-col gap-8">
       <title>{`${fullName} · MotoCompare`}</title>
-      <header>
-        <p className="text-xs font-semibold tracking-widest text-accent-ink uppercase">
-          {motorcycle.brand.name}
-        </p>
-        <h1 className="mt-1 font-display text-2xl font-bold uppercase sm:text-4xl">
-          {motorcycle.name}
-        </h1>
-        <p className="mt-2 text-ink-muted">
-          {motorcycle.category.name} · {motorcycle.year}
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold tracking-widest text-accent-ink uppercase">
+            {motorcycle.brand.name}
+          </p>
+          <h1 className="mt-1 font-display text-2xl font-bold uppercase sm:text-4xl">
+            {motorcycle.name}
+          </h1>
+          <p className="mt-2 text-ink-muted">
+            {motorcycle.category.name} · {motorcycle.year}
+          </p>
+        </div>
+        <CompareToggle
+          item={{
+            slug: motorcycle.slug,
+            name: motorcycle.name,
+            brandName: motorcycle.brand.name,
+          }}
+        />
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
