@@ -8,6 +8,7 @@ import { Skeleton } from '../../components/ui/Skeleton';
 import { formatCop, formatUsd } from '../../lib/format';
 import { useSlowLoading } from '../../lib/use-slow-loading';
 import { CompareToggle } from '../comparison/CompareToggle';
+import { toComparisonItem } from '../comparison/comparison-selection';
 import { MotorcyclePhoto } from '../motorcycles/MotorcyclePhoto';
 import { KeyFigures } from './KeyFigures';
 import { motorcycleDetailQuery, type MotorcycleDetail } from './motorcycle-detail-query';
@@ -71,13 +72,7 @@ function DetailContent({ motorcycle }: { motorcycle: MotorcycleDetail }) {
             {motorcycle.category.name} · {motorcycle.year}
           </p>
         </div>
-        <CompareToggle
-          item={{
-            slug: motorcycle.slug,
-            name: motorcycle.name,
-            brandName: motorcycle.brand.name,
-          }}
-        />
+        <CompareToggle item={toComparisonItem(motorcycle)} />
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">

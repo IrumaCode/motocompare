@@ -10,12 +10,19 @@ import {
 
 const STORAGE_KEY = 'motocompare-comparison';
 
-function readStoredItems(): readonly ComparisonItem[] {
+function parseStored(stored: string | null): readonly ComparisonItem[] {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
     return stored === null ? [] : parseStoredItems(JSON.parse(stored));
   } catch {
-    return []; // storage blocked or invalid JSON: start with an empty tray
+    return []; // invalid JSON: start with an empty tray
+  }
+}
+
+function readStoredItems(): readonly ComparisonItem[] {
+  try {
+    return parseStored(localStorage.getItem(STORAGE_KEY));
+  } catch {
+    return []; // storage blocked (e.g. private mode)
   }
 }
 
@@ -27,7 +34,10 @@ function storeItems(items: readonly ComparisonItem[]): void {
   }
 }
 
-/** Single owner of the tray. It survives navigation and reloads through localStorage. */
+/**
+ * Single owner of the tray. It survives navigation and reloads through localStorage, and other
+ * open tabs follow the changes (like the theme), so one tab never overwrites another's tray.
+ */
 export function ComparisonProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<readonly ComparisonItem[]>(readStoredItems);
 
@@ -35,16 +45,23 @@ export function ComparisonProvider({ children }: { children: ReactNode }) {
     storeItems(items);
   }, [items]);
 
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEY) setItems(parseStored(event.newValue));
+    };
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+    };
+  }, []);
+
   const value = useMemo<ComparisonContextValue>(
     () => ({
       items,
       isFull: items.length >= COMPARE_MAX,
       isSelected: (slug) => items.some((item) => item.slug === slug),
       add: (item) => {
-        // Computed from the current render's items so the caller gets the result right away
-        const next = addItem(items, item);
-        if (next.result === 'added') setItems(next.items);
-        return next.result;
+        setItems((current) => addItem(current, item));
       },
       remove: (slug) => {
         setItems((current) => removeItem(current, slug));

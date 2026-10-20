@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router';
 import { CatalogPage } from '../features/catalog/CatalogPage';
 import { ComparePage } from '../features/comparison/ComparePage';
-import { COMPARE_PATH } from '../features/comparison/comparison-selection';
+import { COMPARE_PATH } from '../features/comparison/compare-url';
 import { HomePage } from '../features/home/HomePage';
 import { MotorcycleDetailPage } from '../features/motorcycle-detail/MotorcycleDetailPage';
 import { AppLayout } from './AppLayout';

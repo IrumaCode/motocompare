@@ -1,11 +1,12 @@
 import { createContext, useContext } from 'react';
-import type { AddResult, ComparisonItem } from './comparison-selection';
+import type { ComparisonItem } from './comparison-selection';
 
 export interface ComparisonContextValue {
   items: readonly ComparisonItem[];
   isFull: boolean;
   isSelected: (slug: string) => boolean;
-  add: (item: ComparisonItem) => AddResult;
+  /** No effect when the motorcycle is already there or the tray is full. */
+  add: (item: ComparisonItem) => void;
   remove: (slug: string) => void;
   clear: () => void;
 }

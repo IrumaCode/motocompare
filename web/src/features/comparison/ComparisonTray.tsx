@@ -6,13 +6,8 @@ import { Button } from '../../components/ui/Button';
 import { buttonClassName } from '../../components/ui/button-styles';
 import { useComparison } from './comparison-context';
 import { TRAY_DROP_ID } from './comparison-dnd';
-import {
-  COMPARE_MAX,
-  COMPARE_MIN,
-  COMPARE_PATH,
-  toCompareHref,
-  type ComparisonItem,
-} from './comparison-selection';
+import { COMPARE_PATH, toCompareHref } from './compare-url';
+import { COMPARE_MAX, COMPARE_MIN, itemName, type ComparisonItem } from './comparison-selection';
 
 function TrayChip({ item, onRemove }: { item: ComparisonItem; onRemove: () => void }) {
   return (
@@ -22,7 +17,7 @@ function TrayChip({ item, onRemove }: { item: ComparisonItem; onRemove: () => vo
       <button
         type="button"
         onClick={onRemove}
-        aria-label={`Quitar ${item.brandName} ${item.name} de la comparación`}
+        aria-label={`Quitar ${itemName(item)} de la comparación`}
         className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-ink-muted hover:text-ink"
       >
         <XIcon size={16} />
@@ -87,7 +82,7 @@ export function ComparisonTray() {
               variant="ghost"
               onClick={clear}
               aria-label="Vaciar la comparación"
-              className="px-3"
+              size="compact"
             >
               <TrashIcon size={18} />
             </Button>

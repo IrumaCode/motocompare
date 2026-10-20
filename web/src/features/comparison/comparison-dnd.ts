@@ -3,7 +3,7 @@ import type {
   KeyboardCoordinateGetter,
   ScreenReaderInstructions,
 } from '@dnd-kit/core';
-import { FULL_TRAY_MESSAGE, isComparisonItem, type ComparisonItem } from './comparison-selection';
+import { isComparisonItem, itemName } from './comparison-selection';
 
 // Drag and drop rules for the comparison tray. A .ts file (no components) so the tray, the
 // drag handle and the DndContext share them without breaking react-refresh.
@@ -44,38 +44,27 @@ export const SCREEN_READER_INSTRUCTIONS: ScreenReaderInstructions = {
     'Escape para cancelar.',
 };
 
-const nameOf = (item: ComparisonItem) => `${item.brandName} ${item.name}`;
-
-interface TrayState {
-  isSelected: (slug: string) => boolean;
-  isFull: boolean;
-}
-
 /**
- * Spanish live-region messages. They are built with the tray state of the current render, which
- * is still the state before the drop when onDragEnd fires.
+ * Spanish live-region messages. Only free cards can be dragged (DragHandle disables the rest),
+ * so a drop on the tray always adds the motorcycle.
  */
-export function createTrayAnnouncements({ isSelected, isFull }: TrayState): Announcements {
-  const describe = (data: unknown, message: (item: ComparisonItem) => string) =>
-    isComparisonItem(data) ? message(data) : undefined;
+const describe = (data: unknown, message: (name: string) => string) =>
+  isComparisonItem(data) ? message(itemName(data)) : undefined;
 
-  return {
-    onDragStart: ({ active }) =>
-      describe(active.data.current, (item) => `Tomaste la ${nameOf(item)}.`),
-    onDragOver: ({ active, over }) =>
-      describe(active.data.current, (item) =>
-        over?.id === TRAY_DROP_ID
-          ? `La ${nameOf(item)} está sobre la bandeja de comparación.`
-          : `La ${nameOf(item)} ya no está sobre la bandeja.`,
-      ),
-    onDragEnd: ({ active, over }) =>
-      describe(active.data.current, (item) => {
-        if (over?.id !== TRAY_DROP_ID) return `Soltaste la ${nameOf(item)} fuera de la bandeja.`;
-        if (isSelected(item.slug)) return `La ${nameOf(item)} ya estaba en la comparación.`;
-        if (isFull) return FULL_TRAY_MESSAGE;
-        return `Añadiste la ${nameOf(item)} a la comparación.`;
-      }),
-    onDragCancel: ({ active }) =>
-      describe(active.data.current, (item) => `Cancelaste el arrastre de la ${nameOf(item)}.`),
-  };
-}
+export const TRAY_ANNOUNCEMENTS: Announcements = {
+  onDragStart: ({ active }) => describe(active.data.current, (name) => `Tomaste la ${name}.`),
+  onDragOver: ({ active, over }) =>
+    describe(active.data.current, (name) =>
+      over?.id === TRAY_DROP_ID
+        ? `La ${name} está sobre la bandeja de comparación.`
+        : `La ${name} ya no está sobre la bandeja.`,
+    ),
+  onDragEnd: ({ active, over }) =>
+    describe(active.data.current, (name) =>
+      over?.id === TRAY_DROP_ID
+        ? `Añadiste la ${name} a la comparación.`
+        : `Soltaste la ${name} fuera de la bandeja.`,
+    ),
+  onDragCancel: ({ active }) =>
+    describe(active.data.current, (name) => `Cancelaste el arrastre de la ${name}.`),
+};
