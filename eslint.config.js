@@ -27,6 +27,13 @@ export default defineConfig(
     extends: [reactHooks.configs.flat.recommended, reactRefresh.configs.vite],
   },
 
+  // Test helpers are never hot-reloaded, so Fast Refresh's "only export components" rule
+  // does not apply to them (render.tsx exports a render function)
+  {
+    files: ['web/src/test/**'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
+
   // Plain JS config files are not part of any tsconfig, so skip type-aware rules there
   {
     files: ['**/*.js'],
