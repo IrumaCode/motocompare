@@ -523,7 +523,8 @@ export const motorcycles: MotorcycleSeed[] = [
       author: 'Retired electrician',
       license: 'CC0',
       licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
-      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Moscow,_KTM_Duke_390_with_Crazy_Iron_cage,_Oct_2026_05.jpg',
+      sourceUrl:
+        'https://commons.wikimedia.org/wiki/File:Moscow,_KTM_Duke_390_with_Crazy_Iron_cage,_Oct_2026_05.jpg',
     },
   },
   {
@@ -769,7 +770,8 @@ export const motorcycles: MotorcycleSeed[] = [
       author: '先従隗始',
       license: 'CC0',
       licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
-      sourceUrl: 'https://commons.wikimedia.org/wiki/File:BMW_S_1000_RR_-_BMW_M_1000_RR_50_Years_M_(22121615413).jpg',
+      sourceUrl:
+        'https://commons.wikimedia.org/wiki/File:BMW_S_1000_RR_-_BMW_M_1000_RR_50_Years_M_(22121615413).jpg',
     },
   },
   {
@@ -794,7 +796,8 @@ export const motorcycles: MotorcycleSeed[] = [
       author: 'Franken-Guzzista',
       license: 'CC BY-SA 4.0',
       licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
-      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2024_BMW_R1300GS_Option_719_Tramuntana_mod.jpg',
+      sourceUrl:
+        'https://commons.wikimedia.org/wiki/File:2024_BMW_R1300GS_Option_719_Tramuntana_mod.jpg',
     },
   },
 ];
