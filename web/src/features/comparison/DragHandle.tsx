@@ -1,7 +1,7 @@
 import { useDraggable } from '@dnd-kit/core';
 import { DotsSixVerticalIcon } from '@phosphor-icons/react';
 import { useComparison } from './comparison-context';
-import type { ComparisonItem } from './comparison-selection';
+import { itemName, type ComparisonItem } from './comparison-selection';
 
 /**
  * Only this handle starts a drag (not the whole card), so scrolling the list with a finger
@@ -23,7 +23,7 @@ export function DragHandle({ item }: { item: ComparisonItem }) {
       type="button"
       {...attributes}
       {...listeners}
-      aria-label={`Arrastrar ${item.brandName} ${item.name} a la comparación`}
+      aria-label={`Arrastrar ${itemName(item)} a la comparación`}
       disabled={disabled}
       className={`inline-flex size-11 cursor-grab touch-none items-center justify-center rounded-lg border border-line text-ink-muted transition duration-200 hover:bg-surface-2 hover:text-ink disabled:cursor-not-allowed disabled:opacity-40 ${isDragging ? 'opacity-40' : ''}`}
     >

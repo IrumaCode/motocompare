@@ -5,12 +5,6 @@
 export const COMPARE_MIN = 2;
 export const COMPARE_MAX = 4;
 
-export const FULL_TRAY_MESSAGE = `La comparación ya tiene ${String(COMPARE_MAX)} motos. Quita una para añadir otra.`;
-
-export const COMPARE_PATH = '/comparar';
-/** Repeated key (?moto=a&moto=b), like the catalog filters: getAll() keeps the order. */
-export const COMPARE_PARAM = 'moto';
-
 /** Enough to show the motorcycle in the tray without another query. */
 export interface ComparisonItem {
   slug: string;
@@ -18,19 +12,25 @@ export interface ComparisonItem {
   brandName: string;
 }
 
-export type AddResult = 'added' | 'duplicate' | 'full';
+/** Any motorcycle from a query (card, detail) as a tray item. */
+export function toComparisonItem(motorcycle: {
+  slug: string;
+  name: string;
+  brand: { name: string };
+}): ComparisonItem {
+  return { slug: motorcycle.slug, name: motorcycle.name, brandName: motorcycle.brand.name };
+}
 
+/** "Yamaha MT-07": how the UI names a motorcycle outside its own card. */
+export const itemName = (item: ComparisonItem): string => `${item.brandName} ${item.name}`;
+
+/** Adds at the end, unless it is already there or the tray is full (then nothing changes). */
 export function addItem(
   items: readonly ComparisonItem[],
   item: ComparisonItem,
-): { items: readonly ComparisonItem[]; result: AddResult } {
-  if (items.some(({ slug }) => slug === item.slug)) {
-    return { items, result: 'duplicate' };
-  }
-  if (items.length >= COMPARE_MAX) {
-    return { items, result: 'full' };
-  }
-  return { items: [...items, item], result: 'added' };
+): readonly ComparisonItem[] {
+  const isDuplicate = items.some(({ slug }) => slug === item.slug);
+  return isDuplicate || items.length >= COMPARE_MAX ? items : [...items, item];
 }
 
 export function removeItem(
@@ -58,17 +58,5 @@ export function parseStoredItems(value: unknown): readonly ComparisonItem[] {
   if (!Array.isArray(value)) {
     return [];
   }
-  return value
-    .filter(isComparisonItem)
-    .reduce<readonly ComparisonItem[]>((items, item) => addItem(items, item).items, []);
-}
-
-export function toCompareHref(slugs: readonly string[]): string {
-  const params = new URLSearchParams(slugs.map((slug) => [COMPARE_PARAM, slug]));
-  return `${COMPARE_PATH}?${params.toString()}`;
-}
-
-/** Slugs from the compare page URL: distinct and capped, so the API never rejects the count. */
-export function slugsFromSearchParams(params: URLSearchParams): string[] {
-  return [...new Set(params.getAll(COMPARE_PARAM).filter(Boolean))].slice(0, COMPARE_MAX);
+  return value.filter(isComparisonItem).reduce<readonly ComparisonItem[]>(addItem, []);
 }

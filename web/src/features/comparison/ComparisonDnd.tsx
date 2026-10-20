@@ -7,12 +7,12 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { useMemo, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { MotoIllustration } from '../../components/MotoIllustration';
 import { useComparison } from './comparison-context';
 import {
-  createTrayAnnouncements,
   SCREEN_READER_INSTRUCTIONS,
+  TRAY_ANNOUNCEMENTS,
   TRAY_DROP_ID,
   trayKeyboardCoordinates,
 } from './comparison-dnd';
@@ -23,6 +23,10 @@ import { isComparisonItem, type ComparisonItem } from './comparison-selection';
 const AUTO_SCROLL = false;
 // Re-measure the tray while dragging: it can appear right when a drag starts (empty tray)
 const MEASURING = { droppable: { strategy: MeasuringStrategy.Always } };
+const ACCESSIBILITY = {
+  announcements: TRAY_ANNOUNCEMENTS,
+  screenReaderInstructions: SCREEN_READER_INSTRUCTIONS,
+};
 
 /** Compact preview that follows the pointer (lighter than cloning the whole card). */
 function DragPreview({ item }: { item: ComparisonItem }) {
@@ -37,7 +41,7 @@ function DragPreview({ item }: { item: ComparisonItem }) {
 
 /** Lets any page drag motorcycle cards into the comparison tray. */
 export function ComparisonDnd({ children }: { children: ReactNode }) {
-  const { add, isSelected, isFull } = useComparison();
+  const { add } = useComparison();
   const [dragged, setDragged] = useState<ComparisonItem | null>(null);
 
   const sensors = useSensors(
@@ -45,18 +49,11 @@ export function ComparisonDnd({ children }: { children: ReactNode }) {
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, { coordinateGetter: trayKeyboardCoordinates }),
   );
-  const accessibility = useMemo(
-    () => ({
-      announcements: createTrayAnnouncements({ isSelected, isFull }),
-      screenReaderInstructions: SCREEN_READER_INSTRUCTIONS,
-    }),
-    [isSelected, isFull],
-  );
 
   return (
     <DndContext
       sensors={sensors}
-      accessibility={accessibility}
+      accessibility={ACCESSIBILITY}
       autoScroll={AUTO_SCROLL}
       measuring={MEASURING}
       onDragStart={({ active }) => {

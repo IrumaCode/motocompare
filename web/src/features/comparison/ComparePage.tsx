@@ -1,5 +1,6 @@
 import { CombinedGraphQLErrors } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
+import { useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { NotFoundPage } from '../../app/NotFoundPage';
 import { ColdStartNotice } from '../../components/ColdStartNotice';
@@ -12,11 +13,21 @@ import { compareQuery, type ComparedMotorcycle } from './compare-query';
 import { ComparedMotorcycles } from './ComparedMotorcycles';
 import { ComparisonCharts } from './ComparisonCharts';
 import { useComparison } from './comparison-context';
-import { COMPARE_MIN, slugsFromSearchParams, toCompareHref } from './comparison-selection';
+import { slugsFromSearchParams, toCompareHref } from './compare-url';
+import { COMPARE_MIN } from './comparison-selection';
 import { PowerToWeightRace } from './PowerToWeightRace';
 import { SpecComparisonTable } from './SpecComparisonTable';
 
 const CATALOG_PATH = '/motos';
+
+/** The motorcycles of `slugs`, in that order, if `list` holds all of them. */
+function pickInOrder(
+  list: readonly ComparedMotorcycle[] | undefined,
+  slugs: readonly string[],
+): readonly ComparedMotorcycle[] | undefined {
+  const picked = slugs.map((slug) => list?.find((motorcycle) => motorcycle.slug === slug));
+  return picked.every((motorcycle) => motorcycle !== undefined) ? picked : undefined;
+}
 
 /** The API rejects unknown slugs with BAD_USER_INPUT: the link is wrong, retrying won't help. */
 function isInvalidLink(error: unknown): boolean {
@@ -82,11 +93,19 @@ export function ComparePage() {
   const slugs = slugsFromSearchParams(searchParams);
   const hasEnough = slugs.length >= COMPARE_MIN;
 
-  const { data, loading, error, refetch } = useQuery(compareQuery, {
+  const { data, previousData, loading, error, refetch } = useQuery(compareQuery, {
     variables: { slugs },
     skip: !hasEnough,
   });
-  const isSlow = useSlowLoading(loading && !data);
+  // After "Quitar" the new list of slugs is not cached yet. Until it arrives, keep showing the
+  // remaining motorcycles from the previous result instead of a full skeleton. Memoized on the
+  // slugs text because a new array would rebuild the charts on every render.
+  const slugsKey = slugs.join(',');
+  const motorcycles = useMemo(
+    () => data?.compare ?? pickInOrder(previousData?.compare, slugsKey.split(',')),
+    [data, previousData, slugsKey],
+  );
+  const isSlow = useSlowLoading(loading && !motorcycles);
 
   // A whole page of its own (with its h1), like the detail page does for an unknown slug
   if (error && !loading && isInvalidLink(error)) {
@@ -109,8 +128,8 @@ export function ComparePage() {
         />
       );
     }
-    if (!data) return <CompareSkeleton isSlow={isSlow} count={slugs.length} />;
-    return <CompareContent motorcycles={data.compare} />;
+    if (!motorcycles) return <CompareSkeleton isSlow={isSlow} count={slugs.length} />;
+    return <CompareContent motorcycles={motorcycles} />;
   }
 
   return (

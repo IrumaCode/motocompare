@@ -6,7 +6,7 @@ import { seriesAt, type SeriesShape } from '../comparison-series';
 import { withAlpha } from './chart-theme';
 import { useChart, type ChartBuilder } from './use-chart';
 
-// Six axes where "better" has a clear direction. Displacement and seat height stay out:
+// Axes where "better" has a clear direction (price joins them when every motorcycle has one). Displacement and seat height stay out:
 // neither more nor less is better, so they only appear in the table.
 const BASE_AXES: readonly ComparisonMetric[] = [
   METRICS.powerHp,

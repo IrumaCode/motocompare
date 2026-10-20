@@ -4,7 +4,7 @@ import type { ComparedMotorcycle } from './compare-query';
 // Single definition of every number the comparison shows. The table, the hp/kg race and the
 // charts all read it, so a metric's label, unit and "which value wins" live in one place.
 
-/** Which value wins; null when neither is better (e.g. a taller seat is not "better"). */
+/** Which value wins. */
 export type Direction = 'higher' | 'lower';
 
 export type MetricId =
@@ -22,6 +22,7 @@ export interface ComparisonMetric {
   label: string;
   /** Axis name when the value becomes a score, if it differs (lower weight reads "Ligereza"). */
   scoreLabel?: string;
+  /** null when neither is better (e.g. a taller seat is not "better"). */
   direction: Direction | null;
   /** null when the value is unknown (some motorcycles have no confirmed price). */
   value: (motorcycle: ComparedMotorcycle) => number | null;

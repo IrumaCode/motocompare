@@ -8,6 +8,11 @@ import { SeriesMarker } from './SeriesMarker';
 
 const METRIC = METRICS.powerToWeight;
 
+function formatValue(motorcycle: ComparedMotorcycle): string {
+  const value = METRIC.value(motorcycle);
+  return value === null ? 'Sin dato oficial' : METRIC.format(value);
+}
+
 /** Room reserved at the end of the track for the bike drawing (Tailwind w-12). */
 const BIKE_SPACE = '3rem';
 
@@ -63,7 +68,7 @@ export function PowerToWeightRace({ motorcycles }: { motorcycles: readonly Compa
                 <span className="font-semibold">{motorcycle.name}</span>
               </span>
               <span className="ml-auto inline-flex items-center gap-1.5 font-mono font-semibold tabular-nums">
-                {METRIC.format(METRIC.value(motorcycle) ?? 0)}
+                {formatValue(motorcycle)}
                 {best[index] && (
                   <>
                     <TrophyIcon size={16} className="text-accent-ink" />

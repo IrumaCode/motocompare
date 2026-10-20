@@ -8,14 +8,14 @@ const SHAPES: Record<SeriesShape, string> = {
 };
 
 /** The same color and shape the charts use for this column. Decorative: names are in text. */
-export function SeriesMarker({ index, className = '' }: { index: number; className?: string }) {
+export function SeriesMarker({ index }: { index: number }) {
   const series = seriesAt(index);
   return (
     <svg
       viewBox="0 0 12 12"
       aria-hidden="true"
       focusable="false"
-      className={`size-3 shrink-0 ${series.fillClass} ${className}`}
+      className={`size-3 shrink-0 ${series.fillClass}`}
     >
       <path d={SHAPES[series.shape]} />
     </svg>
