@@ -9,6 +9,16 @@ type TransmissionSpec =
   | { transmission: 'CVT'; gears: null }
   | { transmission: Exclude<TransmissionType, 'CVT'>; gears: number };
 
+/** Credit for a freely licensed Wikimedia Commons photo stored in web/public/motos/<slug>.webp */
+export interface MotorcycleImageSeed {
+  author: string;
+  /** Short license name as Commons shows it, e.g. "CC BY-SA 4.0" */
+  license: string;
+  licenseUrl: string;
+  /** Commons file page */
+  sourceUrl: string;
+}
+
 export type MotorcycleSeed = TransmissionSpec & {
   brandSlug: string;
   categorySlug: string;
@@ -25,6 +35,8 @@ export type MotorcycleSeed = TransmissionSpec & {
   weightKg: number;
   seatHeightMm: number;
   fuelCapacityL: number;
+  /** Omitted when no freely licensed photo of this model was found */
+  image?: MotorcycleImageSeed;
 };
 
 /*
@@ -34,6 +46,8 @@ export type MotorcycleSeed = TransmissionSpec & {
  * - Weight: ready-to-ride. KTM publishes weight without fuel, so a full tank is added (0.74 kg/L).
  * - Seat height: standard seat, lowest standard position.
  * - priceUsd: US base MSRP without destination charge; null when no official figure was confirmed.
+ * - image: hand-picked Commons photo (CC BY, CC BY-SA or CC0), cropped to 16:10. It may show
+ *   another model year or color of the same generation.
  */
 export const motorcycles: MotorcycleSeed[] = [
   // Yamaha
@@ -55,6 +69,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 170,
     seatHeightMm: 780,
     fuelCapacityL: 14,
+    image: {
+      author: 'Kuro202',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:5-YZF_R3_2021.jpg',
+    },
   },
   {
     brandSlug: 'yamaha',
@@ -74,6 +94,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 188,
     seatHeightMm: 835,
     fuelCapacityL: 13,
+    image: {
+      author: 'Chanokchon',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2021_Yamaha_YZF-R7.jpg',
+    },
   },
   {
     brandSlug: 'yamaha',
@@ -93,6 +119,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 184,
     seatHeightMm: 805,
     fuelCapacityL: 14,
+    image: {
+      author: 'PackMecEng',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2021_Black_Yamaha_MT-07.jpg',
+    },
   },
   {
     brandSlug: 'yamaha',
@@ -112,6 +144,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 193,
     seatHeightMm: 825,
     fuelCapacityL: 14,
+    image: {
+      author: 'Chanokchon',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2024_Yamaha_MT-09_Y-AMT.jpg',
+    },
   },
   {
     brandSlug: 'yamaha',
@@ -131,6 +169,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 205,
     seatHeightMm: 875,
     fuelCapacityL: 16,
+    image: {
+      author: 'Roland Niedermeier',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Yamaha_Tenere_700.jpg',
+    },
   },
   {
     brandSlug: 'yamaha',
@@ -150,6 +194,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 223,
     seatHeightMm: 820,
     fuelCapacityL: 18,
+    image: {
+      author: 'AVMOTO',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Yamaha_Tracer_9_GT%2B_2025.jpg',
+    },
   },
 
   // Honda
@@ -171,6 +221,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 133,
     seatHeightMm: 765,
     fuelCapacityL: 8.1,
+    image: {
+      author: 'Chanokchon',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2022_Honda_ADV160.png',
+    },
   },
   {
     brandSlug: 'honda',
@@ -190,6 +246,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 141,
     seatHeightMm: 880,
     fuelCapacityL: 7.8,
+    image: {
+      author: 'Chanokchon',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2024_Honda_CRF300L.jpg',
+    },
   },
   {
     brandSlug: 'honda',
@@ -209,6 +271,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 203,
     seatHeightMm: 810,
     fuelCapacityL: 15.4,
+    image: {
+      author: 'Chanokchon',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2023_Honda_CB650R_Standard.jpg',
+    },
   },
   {
     brandSlug: 'honda',
@@ -228,6 +296,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 211,
     seatHeightMm: 810,
     fuelCapacityL: 15.4,
+    image: {
+      author: 'Chanokchon',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2023_Honda_CBR650R_Standard.jpg',
+    },
   },
   {
     brandSlug: 'honda',
@@ -247,6 +321,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 221,
     seatHeightMm: 700,
     fuelCapacityL: 13.6,
+    image: {
+      author: 'Chanokchon',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2021_Honda_Rebel_1100_MT.jpg',
+    },
   },
   {
     brandSlug: 'honda',
@@ -266,6 +346,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 231,
     seatHeightMm: 850,
     fuelCapacityL: 18.8,
+    image: {
+      author: 'Rainmaker47',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Honda_crf1000_africa_twin_tokyo.JPG',
+    },
   },
 
   // Kawasaki
@@ -306,6 +392,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 168,
     seatHeightMm: 785,
     fuelCapacityL: 14,
+    image: {
+      author: 'AVMOTO',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Kawasaki_Ninja_500_SE_2025.jpg',
+    },
   },
   {
     brandSlug: 'kawasaki',
@@ -325,6 +417,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 196,
     seatHeightMm: 830,
     fuelCapacityL: 17,
+    image: {
+      author: 'AVMOTO',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Kawasaki_Ninja_ZX-6R_2025.jpg',
+    },
   },
   {
     brandSlug: 'kawasaki',
@@ -344,6 +442,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 212,
     seatHeightMm: 800,
     fuelCapacityL: 17,
+    image: {
+      author: 'T.doi.z900',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:KawasakiZ900.jpg',
+    },
   },
   {
     brandSlug: 'kawasaki',
@@ -363,6 +467,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 219,
     seatHeightMm: 845,
     fuelCapacityL: 21,
+    image: {
+      author: 'AVMOTO',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Kawasaki_Versys_650_2025.jpg',
+    },
   },
   {
     brandSlug: 'kawasaki',
@@ -382,6 +492,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 223,
     seatHeightMm: 705,
     fuelCapacityL: 14,
+    image: {
+      author: 'Oq10pass',
+      license: 'CC0',
+      licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Kawasaki_Vulcan_S_%2725.jpg',
+    },
   },
 
   // KTM
@@ -403,6 +519,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 176,
     seatHeightMm: 820,
     fuelCapacityL: 15,
+    image: {
+      author: 'Retired electrician',
+      license: 'CC0',
+      licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:Moscow,_KTM_Duke_390_with_Crazy_Iron_cage,_Oct_2026_05.jpg',
+    },
   },
   {
     brandSlug: 'ktm',
@@ -422,6 +544,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 165,
     seatHeightMm: 824,
     fuelCapacityL: 13.7,
+    image: {
+      author: 'Dennis Bratland',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2015_KTM_RC390_right.JPG',
+    },
   },
   {
     brandSlug: 'ktm',
@@ -441,6 +569,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 158,
     seatHeightMm: 929,
     fuelCapacityL: 13.5,
+    image: {
+      author: 'Richard Linnander',
+      license: 'CC BY 3.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/3.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:KTM_690_Enduro.JPG',
+    },
   },
   {
     brandSlug: 'ktm',
@@ -460,6 +594,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 184,
     seatHeightMm: 825,
     fuelCapacityL: 14,
+    image: {
+      author: 'Cjp24',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:KTM_790_Duke_(1).jpg',
+    },
   },
   {
     brandSlug: 'ktm',
@@ -498,6 +638,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 215,
     seatHeightMm: 840,
     fuelCapacityL: 20,
+    image: {
+      author: 'Siechfred',
+      license: 'CC0',
+      licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:KTM_890_Adventure.jpg',
+    },
   },
 
   // BMW Motorrad
@@ -519,6 +665,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 164,
     seatHeightMm: 785,
     fuelCapacityL: 11,
+    image: {
+      author: 'Erluw',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:BMW_G_310_R.jpg',
+    },
   },
   {
     brandSlug: 'bmw',
@@ -538,6 +690,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 175,
     seatHeightMm: 835,
     fuelCapacityL: 11,
+    image: {
+      author: 'Wikisympathisant',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:BMW_G310_GS_2023-08.jpg',
+    },
   },
   {
     brandSlug: 'bmw',
@@ -557,6 +715,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 211,
     seatHeightMm: 815,
     fuelCapacityL: 13,
+    image: {
+      author: 'Wiki LIC',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:BMW_F900R_(1crop).jpg',
+    },
   },
   {
     brandSlug: 'bmw',
@@ -576,6 +740,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 219,
     seatHeightMm: 815,
     fuelCapacityL: 15.5,
+    image: {
+      author: 'MotorNL',
+      license: 'CC BY 3.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by/3.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:BMW_F900XR_(1).png',
+    },
   },
   {
     brandSlug: 'bmw',
@@ -595,6 +765,12 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 197,
     seatHeightMm: 824,
     fuelCapacityL: 16.5,
+    image: {
+      author: '先従隗始',
+      license: 'CC0',
+      licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:BMW_S_1000_RR_-_BMW_M_1000_RR_50_Years_M_(22121615413).jpg',
+    },
   },
   {
     brandSlug: 'bmw',
@@ -614,5 +790,11 @@ export const motorcycles: MotorcycleSeed[] = [
     weightKg: 237,
     seatHeightMm: 850,
     fuelCapacityL: 19,
+    image: {
+      author: 'Franken-Guzzista',
+      license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+      sourceUrl: 'https://commons.wikimedia.org/wiki/File:2024_BMW_R1300GS_Option_719_Tramuntana_mod.jpg',
+    },
   },
 ];

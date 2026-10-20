@@ -84,6 +84,15 @@ model Motorcycle {
   seatHeightMm  Int   @map("seat_height_mm")
   fuelCapacityL Float @map("fuel_capacity_l")
 
+  /// Photo credit (all null when there is no photo). Path is root-relative to the web app,
+  /// e.g. "/motos/yamaha-mt-07-2024.webp"
+  imagePath       String? @map("image_path")
+  imageAuthor     String? @map("image_author")
+  /// Short license name, e.g. "CC BY-SA 4.0"
+  imageLicense    String? @map("image_license")
+  imageLicenseUrl String? @map("image_license_url")
+  imageSourceUrl  String? @map("image_source_url")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

@@ -2,7 +2,7 @@ import { createPrismaClient } from '../src/db/prisma-client.js';
 import type { Prisma } from '../src/generated/prisma/client.js';
 import { brands } from './seed-data/brands.js';
 import { categories } from './seed-data/categories.js';
-import { motorcycles } from './seed-data/motorcycles.js';
+import { motorcycles, type MotorcycleImageSeed } from './seed-data/motorcycles.js';
 
 type Tx = Prisma.TransactionClient;
 type IdsBySlug = Map<string, number>;
@@ -50,12 +50,24 @@ async function seedCategories(tx: Tx): Promise<IdsBySlug> {
   return ids;
 }
 
+/** Explicit nulls when there is no photo, so an update also clears a removed one. */
+function toImageColumns(slug: string, image: MotorcycleImageSeed | undefined) {
+  return {
+    imagePath: image ? `/motos/${slug}.webp` : null,
+    imageAuthor: image?.author ?? null,
+    imageLicense: image?.license ?? null,
+    imageLicenseUrl: image?.licenseUrl ?? null,
+    imageSourceUrl: image?.sourceUrl ?? null,
+  };
+}
+
 async function seedMotorcycles(tx: Tx, brandIds: IdsBySlug, categoryIds: IdsBySlug): Promise<void> {
   const seededSlugs: string[] = [];
-  for (const { brandSlug, categorySlug, ...specs } of motorcycles) {
+  for (const { brandSlug, categorySlug, image, ...specs } of motorcycles) {
     const slug = toSlug(`${brandSlug} ${specs.name} ${String(specs.year)}`);
     const data = {
       ...specs,
+      ...toImageColumns(slug, image),
       slug,
       brandId: requireId(brandIds, brandSlug),
       categoryId: requireId(categoryIds, categorySlug),
