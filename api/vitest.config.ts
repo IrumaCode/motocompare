@@ -1,4 +1,6 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
+
+const INTEGRATION_TESTS = 'src/**/*.int.test.ts';
 
 export default defineConfig({
   ssr: {
@@ -8,7 +10,28 @@ export default defineConfig({
       // there would be two GraphQLError classes and `instanceof` checks would fail (the "dual
       // package hazard"). Resolving with Node's own conditions keeps a single copy, as in
       // production.
-      conditions: ['module-sync', 'node', 'import'],
+      conditions: ['module-sync', 'node'],
     },
+  },
+  test: {
+    projects: [
+      {
+        // Fast and self-contained (in-memory fakes): `pnpm test`
+        extends: true,
+        test: {
+          name: 'unit',
+          exclude: [...configDefaults.exclude, INTEGRATION_TESTS],
+        },
+      },
+      {
+        // Against a real PostgreSQL (Docker): `pnpm test:db`
+        extends: true,
+        test: {
+          name: 'integration',
+          include: [INTEGRATION_TESTS],
+          globalSetup: ['src/test/integration-setup.ts'],
+        },
+      },
+    ],
   },
 });
