@@ -10,6 +10,7 @@ import { Skeleton } from '../../components/ui/Skeleton';
 import { useSlowLoading } from '../../lib/use-slow-loading';
 import { compareQuery, type ComparedMotorcycle } from './compare-query';
 import { ComparedMotorcycles } from './ComparedMotorcycles';
+import { ComparisonCharts } from './ComparisonCharts';
 import { useComparison } from './comparison-context';
 import { COMPARE_MIN, slugsFromSearchParams, toCompareHref } from './comparison-selection';
 import { PowerToWeightRace } from './PowerToWeightRace';
@@ -70,6 +71,7 @@ function CompareContent({ motorcycles }: { motorcycles: readonly ComparedMotorcy
     <div className="flex flex-col gap-10">
       <ComparedMotorcycles motorcycles={motorcycles} onRemove={removeColumn} />
       <PowerToWeightRace motorcycles={motorcycles} />
+      <ComparisonCharts motorcycles={motorcycles} />
       <SpecComparisonTable motorcycles={motorcycles} />
     </div>
   );
