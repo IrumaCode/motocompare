@@ -53,7 +53,7 @@ El revisor dio el veredicto "listo con sugerencias", sin hallazgos de gravedad a
 ## Comandos que vale la pena recordar
 
 ```bash
-pnpm --filter api db:migrate -- --name add_abs_field   # nueva migración tras editar el schema
+pnpm --filter api exec prisma migrate dev --name add_abs_field   # nueva migración tras editar el schema
 pnpm --filter api db:seed                              # cargar/actualizar datos
 pnpm --filter api db:studio                            # explorar la base en el navegador
 pnpm --filter api db:reset                             # borrar todo y reaplicar migraciones (luego db:seed)

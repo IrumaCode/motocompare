@@ -4,7 +4,7 @@ Aplicación para comparar especificaciones de motocicletas: catálogo con filtro
 
 Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) construido por fases.
 
-> **Estado:** Fase 3, web en React conectada a la API: inicio con estadísticas y las motos más potentes, tema claro y oscuro. El catálogo con filtros y el comparador llegan en las próximas fases.
+> **Estado:** Fase 4, catálogo con filtros en la URL, orden y paginación; ficha de cada moto con foto de Wikimedia Commons, cifras clave y medidor de potencia. El comparador llega en la próxima fase.
 
 ## Stack
 
@@ -66,6 +66,8 @@ El campo `priceCop` convierte el precio con la TRM oficial del día, publicada p
 ## Datos
 
 Las especificaciones de las motos (modelo 2024) se curaron a mano a partir de las fichas oficiales de cada fabricante, sin scraping. Los datos se verificaron en octubre de 2026. La potencia se expresa en hp y el peso en orden de marcha. Los precios son el MSRP base en EE. UU., sin gastos de envío; si no se pudo confirmar un precio oficial, el campo queda vacío.
+
+Las fotos (`web/public/motos/`) vienen de Wikimedia Commons y tienen licencias libres (CC BY, CC BY-SA o CC0). Se recortaron a 16:10 y se convirtieron a WebP. La ficha de cada moto muestra el autor, la licencia y el enlace al archivo original. Algunas fotos son de otro año o color de la misma generación, y las motos sin foto libre muestran una silueta.
 
 ## Estructura
 
