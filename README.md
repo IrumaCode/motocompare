@@ -4,14 +4,14 @@ Aplicación para comparar especificaciones de motocicletas: catálogo con filtro
 
 Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) construido por fases.
 
-> **Estado:** Fase 4, catálogo con filtros en la URL, orden y paginación; ficha de cada moto con foto de Wikimedia Commons, cifras clave y medidor de potencia. El comparador llega en la próxima fase.
+> **Estado:** Fase 5, comparador de 2 a 4 motos: se eligen con un botón o arrastrándolas a una bandeja (también con teclado), y la página `/comparar` muestra una carrera de potencia por kilo, gráficos de radar y barras, y la ficha técnica lado a lado. El enlace de cada comparación se puede compartir.
 
 ## Stack
 
 - **Monorepo:** pnpm workspaces (`api/` y `web/`)
 - **Lenguaje:** TypeScript estricto
 - **API:** Node.js + GraphQL Yoga + Prisma 7 + PostgreSQL
-- **Web:** React + Vite + Tailwind CSS + Apollo Client + React Router (Chart.js en el comparador)
+- **Web:** React + Vite + Tailwind CSS + Apollo Client + React Router, Chart.js (gráficos) y dnd-kit (arrastrar y soltar)
 - **Calidad:** ESLint, Prettier, Vitest
 - **Infra local:** Docker Compose (PostgreSQL 18)
 
