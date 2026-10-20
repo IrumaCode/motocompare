@@ -1,6 +1,6 @@
 import { CheckIcon, PlusIcon } from '@phosphor-icons/react';
 import { useComparison } from './comparison-context';
-import type { ComparisonItem } from './comparison-selection';
+import { FULL_TRAY_MESSAGE, type ComparisonItem } from './comparison-selection';
 
 /**
  * Button alternative to dragging (WCAG 2.2 "Dragging movements"). A toggle button keeps the
@@ -16,7 +16,7 @@ export function CompareToggle({ item }: { item: ComparisonItem }) {
     <button
       type="button"
       aria-pressed={selected}
-      title={blocked ? 'La comparación ya tiene 4 motos' : undefined}
+      title={blocked ? FULL_TRAY_MESSAGE : undefined}
       disabled={blocked}
       onClick={() => {
         if (selected) remove(item.slug);
