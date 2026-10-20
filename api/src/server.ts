@@ -1,12 +1,12 @@
 // Node entry point: the only file that depends on Node's HTTP server.
 import { createServer } from 'node:http';
-import { createApp } from './app.js';
+import { createApp, createAppDependencies } from './app.js';
 import { loadConfig } from './config.js';
 import { createPrismaClient } from './db/prisma-client.js';
 
 const config = loadConfig(process.env);
 const prisma = createPrismaClient(config.databaseUrl);
-const yoga = createApp({ prisma });
+const yoga = createApp(createAppDependencies(prisma));
 const server = createServer(yoga.requestListener);
 
 server.listen(config.port, () => {
