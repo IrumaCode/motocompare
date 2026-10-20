@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import { ColdStartNotice } from '../../components/ColdStartNotice';
 import { Button } from '../../components/ui/Button';
 import { ErrorState } from '../../components/ui/ErrorState';
-import { graphql } from '../../generated/graphql';
 import { pluralize } from '../../lib/format';
 import { useSlowLoading } from '../../lib/use-slow-loading';
 import { ComparableMotorcycleCard } from '../comparison/ComparableMotorcycleCard';
 import { MotorcycleCardSkeleton } from '../motorcycles/MotorcycleCardSkeleton';
 import { CatalogEmptyState } from './CatalogEmptyState';
+import { catalogQuery, filterOptionsQuery } from './catalog-queries';
 import { CatalogFilters } from './CatalogFilters';
 import { SORT_OPTIONS, type SortOptionId } from './catalog-presets';
 import {
@@ -25,39 +25,6 @@ import { useCatalogParams } from './use-catalog-params';
 
 const PAGE_SIZE = 12;
 const GRID_CLASSES = 'grid gap-4 sm:grid-cols-2 xl:grid-cols-3';
-
-// Separate from the results query: changing a filter must not refetch the filter options
-const filterOptionsQuery = graphql(`
-  query CatalogFilterOptions {
-    brands {
-      id
-      slug
-      name
-    }
-    categories {
-      id
-      slug
-      name
-    }
-  }
-`);
-
-const catalogQuery = graphql(`
-  query CatalogMotorcycles(
-    $filter: MotorcycleFilter
-    $sort: MotorcycleSort!
-    $page: Int!
-    $pageSize: Int!
-  ) {
-    motorcycles(filter: $filter, sort: $sort, page: $page, pageSize: $pageSize) {
-      totalCount
-      items {
-        id
-        ...MotorcycleCard
-      }
-    }
-  }
-`);
 
 function isSortOptionId(value: string): value is SortOptionId {
   return SORT_OPTIONS.some((option) => option.id === value);
