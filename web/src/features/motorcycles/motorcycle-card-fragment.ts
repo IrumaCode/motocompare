@@ -6,12 +6,17 @@ import { graphql } from '../../generated/graphql';
 export const motorcycleCardFragment = graphql(`
   fragment MotorcycleCard on Motorcycle {
     id
+    slug
     name
     year
     displacementCc
     powerHp
+    weightKg
     priceUsd
     priceCop
+    image {
+      url
+    }
     brand {
       id
       name
