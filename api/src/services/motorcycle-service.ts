@@ -32,7 +32,8 @@ export interface MotorcycleService {
 
 /**
  * Share (0-100) of the *other* catalog values that are strictly lower than `value`.
- * `values` includes the motorcycle itself, so the most powerful one gets 100.
+ * `values` includes the motorcycle itself, so the most powerful one gets 100 (unless it shares
+ * that power with another motorcycle: a tie is not "strictly lower").
  */
 export function percentileBelow(values: readonly number[], value: number): number {
   const others = values.length - 1;

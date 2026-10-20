@@ -18,3 +18,7 @@ const numberFormatter = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 
 export const formatCop = (value: number): string => copFormatter.format(value);
 export const formatUsd = (value: number): string => usdFormatter.format(value);
 export const formatNumber = (value: number): string => numberFormatter.format(value);
+
+/** "1 moto", "12 motos" (Spanish uses the singular only for exactly one). */
+export const pluralize = (count: number, singular: string, plural: string): string =>
+  `${formatNumber(count)} ${count === 1 ? singular : plural}`;

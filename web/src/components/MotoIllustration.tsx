@@ -132,25 +132,29 @@ const POWER_SPEED_LINES = [
   { y: 40, delay: '0.2s' },
   { y: 76, delay: '0.4s' },
 ];
-const LINE_LENGTH: Record<SpeedLevel, number> = { 0: 0, 1: 12, 2: 18, 3: 26 };
-const LINE_DURATION: Record<SpeedLevel, string> = { 0: '0s', 1: '1.1s', 2: '0.8s', 3: '0.5s' };
+const LINE_LENGTH: Record<Exclude<SpeedLevel, 0>, number> = { 1: 12, 2: 18, 3: 26 };
+const LINE_DURATION: Record<Exclude<SpeedLevel, 0>, string> = { 1: '1.1s', 2: '0.8s', 3: '0.5s' };
+
+function PowerSpeedLines({ level }: { level: Exclude<SpeedLevel, 0> }) {
+  return POWER_SPEED_LINES.slice(0, level).map(({ y, delay }) => (
+    <line
+      key={y}
+      x1="2"
+      y1={y}
+      x2={2 + LINE_LENGTH[level]}
+      y2={y}
+      strokeWidth="4"
+      style={{ animationDelay: delay, animationDuration: LINE_DURATION[level] }}
+      className="stroke-accent-ink motion-safe:animate-speed-line"
+    />
+  ));
+}
 
 function StaticMoto({ className, speedLevel }: { className?: string; speedLevel: SpeedLevel }) {
   return (
     <svg viewBox="0 0 200 120" className={className} {...SVG_PROPS}>
       <line x1="4" y1="116" x2="196" y2="116" strokeWidth="4" className="stroke-line" />
-      {POWER_SPEED_LINES.slice(0, speedLevel).map(({ y, delay }) => (
-        <line
-          key={y}
-          x1="2"
-          y1={y}
-          x2={2 + LINE_LENGTH[speedLevel]}
-          y2={y}
-          strokeWidth="4"
-          style={{ animationDelay: delay, animationDuration: LINE_DURATION[speedLevel] }}
-          className="stroke-accent-ink motion-safe:animate-speed-line"
-        />
-      ))}
+      {speedLevel !== 0 && <PowerSpeedLines level={speedLevel} />}
       <BikeWithRider spinning={false} />
     </svg>
   );

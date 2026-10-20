@@ -52,7 +52,7 @@ export const typeDefs = /* GraphQL */ `
     fuelCapacityL: Float!
     "Freely licensed photo; null when the catalog has none for this model."
     image: MotorcycleImage
-    "Share (0-100) of the other catalog motorcycles with less power; the most powerful gets 100."
+    "Share (0-100) of the other catalog motorcycles with strictly less power (a unique top gets 100)."
     powerPercentile: Float!
   }
 

@@ -40,9 +40,12 @@ function findId<T extends { id: string }>(
   return options.find((option) => option.id === value)?.id ?? null;
 }
 
+/** Far above any real page count, and safely inside GraphQL's 32-bit Int. */
+const MAX_PAGE = 10_000;
+
 function parsePage(value: string | null): number {
   const page = Number(value);
-  return Number.isInteger(page) && page > 1 ? page : 1;
+  return Number.isInteger(page) && page > 1 && page <= MAX_PAGE ? page : 1;
 }
 
 /** Unknown preset ids fall back to "no filter", so a broken link still shows the catalog. */

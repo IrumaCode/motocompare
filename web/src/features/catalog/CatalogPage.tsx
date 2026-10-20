@@ -5,6 +5,7 @@ import { ColdStartNotice } from '../../components/ColdStartNotice';
 import { Button } from '../../components/ui/Button';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { graphql } from '../../generated/graphql';
+import { pluralize } from '../../lib/format';
 import { useSlowLoading } from '../../lib/use-slow-loading';
 import { MotorcycleCard } from '../motorcycles/MotorcycleCard';
 import { MotorcycleCardSkeleton } from '../motorcycles/MotorcycleCardSkeleton';
@@ -87,12 +88,13 @@ export function CatalogPage() {
   const results = (data ?? previousData)?.motorcycles;
   const isSlow = useSlowLoading(loading && !results);
 
-  // After a page change, move focus (and the scroll) to the top of the results
+  // After using the pagination, move focus (and the scroll) to the top of the results.
+  // Only then: a filter or sort change also resets the page, but focus must stay on that control.
   const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
-  const shownPage = useRef(params.page);
+  const focusResultsOnPageChange = useRef(false);
   useEffect(() => {
-    if (shownPage.current !== params.page) {
-      shownPage.current = params.page;
+    if (focusResultsOnPageChange.current) {
+      focusResultsOnPageChange.current = false;
       resultsHeadingRef.current?.focus();
     }
   }, [params.page]);
@@ -113,16 +115,18 @@ export function CatalogPage() {
   );
 
   function renderResults() {
-    if (!results) {
-      // On retry Apollo sets `loading` again, so the skeleton replaces the error meanwhile
-      return error && !loading ? (
+    // Checked before `results`: after a failed filter change, previousData would otherwise
+    // show the old list as if the filter had applied. On retry `loading` turns true again.
+    if (error && !loading) {
+      return (
         <ErrorState
           message="No pudimos cargar el catálogo. Inténtalo de nuevo en unos segundos."
           onRetry={() => void refetch()}
         />
-      ) : (
-        <ResultsSkeleton isSlow={isSlow} />
       );
+    }
+    if (!results) {
+      return <ResultsSkeleton isSlow={isSlow} />;
     }
     if (results.totalCount === 0) {
       return (
@@ -138,7 +142,7 @@ export function CatalogPage() {
       return (
         <CatalogEmptyState
           title="Esta página no existe"
-          message={`El catálogo con estos filtros tiene ${String(totalPages)} página(s).`}
+          message={`El catálogo con estos filtros tiene ${pluralize(totalPages, 'página', 'páginas')}.`}
           actionLabel="Ir a la página 1"
           onAction={() => {
             setParams({ ...params, page: 1 });
@@ -160,6 +164,9 @@ export function CatalogPage() {
           page={params.page}
           totalPages={totalPages}
           hrefFor={(page) => `?${toSearchParams({ ...params, page }).toString()}`}
+          onNavigate={() => {
+            focusResultsOnPageChange.current = true;
+          }}
         />
       </div>
     );
@@ -193,7 +200,7 @@ export function CatalogPage() {
 
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p role="status" className="text-sm text-ink-muted">
-              {results ? `${String(results.totalCount)} motos` : ''}
+              {results ? pluralize(results.totalCount, 'moto', 'motos') : ''}
             </p>
             <div className="flex w-full items-center gap-2 sm:w-auto">
               <Button
@@ -213,7 +220,7 @@ export function CatalogPage() {
                   value={params.sort}
                   onChange={(event) => {
                     const sort = event.target.value;
-                    if (isSortOptionId(sort)) setParams({ ...params, sort, page: 1 });
+                    if (isSortOptionId(sort)) setParams(withFilters(params, { sort }));
                   }}
                   className="min-h-11 w-full min-w-0 cursor-pointer rounded-lg border border-line bg-surface px-3 text-ink sm:w-auto"
                 >

@@ -6,6 +6,8 @@ interface PaginationProps {
   totalPages: number;
   /** Link target for a given page, so each page is a real, shareable URL */
   hrefFor: (page: number) => string;
+  /** Called when the user follows any pagination link */
+  onNavigate: () => void;
 }
 
 const ITEM_CLASSES =
@@ -14,7 +16,7 @@ const IDLE_CLASSES = 'border-line hover:bg-surface-2';
 const CURRENT_CLASSES = 'border-accent bg-accent text-on-accent';
 
 // Every page number is shown: 30 motorcycles make 3 pages, so no ellipsis logic (YAGNI)
-export function Pagination({ page, totalPages, hrefFor }: PaginationProps) {
+export function Pagination({ page, totalPages, hrefFor, onNavigate }: PaginationProps) {
   if (totalPages <= 1) {
     return null;
   }
@@ -24,6 +26,7 @@ export function Pagination({ page, totalPages, hrefFor }: PaginationProps) {
     <nav aria-label="Paginación" className="flex flex-wrap items-center justify-center gap-2">
       {page > 1 && (
         <Link
+          onClick={onNavigate}
           to={hrefFor(page - 1)}
           aria-label="Página anterior"
           className={`${ITEM_CLASSES} ${IDLE_CLASSES}`}
@@ -34,6 +37,7 @@ export function Pagination({ page, totalPages, hrefFor }: PaginationProps) {
       {pages.map((number) => (
         <Link
           key={number}
+          onClick={onNavigate}
           to={hrefFor(number)}
           aria-current={number === page ? 'page' : undefined}
           aria-label={`Página ${String(number)}`}
@@ -44,6 +48,7 @@ export function Pagination({ page, totalPages, hrefFor }: PaginationProps) {
       ))}
       {page < totalPages && (
         <Link
+          onClick={onNavigate}
           to={hrefFor(page + 1)}
           aria-label="Página siguiente"
           className={`${ITEM_CLASSES} ${IDLE_CLASSES}`}

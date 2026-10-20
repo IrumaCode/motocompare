@@ -1,6 +1,7 @@
 import { XIcon } from '@phosphor-icons/react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Button } from '../../components/ui/Button';
+import { pluralize } from '../../lib/format';
 
 interface FiltersDialogProps {
   open: boolean;
@@ -56,7 +57,9 @@ export function FiltersDialog({ open, onClose, resultCount, children }: FiltersD
           <div className="overflow-y-auto px-4 py-5">{children}</div>
           <div className="border-t border-line p-4">
             <Button onClick={onClose} className="w-full">
-              {resultCount === null ? 'Ver motos' : `Ver ${String(resultCount)} motos`}
+              {resultCount === null
+                ? 'Ver motos'
+                : `Ver ${pluralize(resultCount, 'moto', 'motos')}`}
             </Button>
           </div>
         </div>
