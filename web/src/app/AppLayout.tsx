@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import { ComparisonProvider } from '../features/comparison/ComparisonProvider';
+import { ComparisonTray } from '../features/comparison/ComparisonTray';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
@@ -12,6 +13,7 @@ export function AppLayout() {
           <Outlet />
         </main>
         <Footer />
+        <ComparisonTray />
       </div>
     </ComparisonProvider>
   );

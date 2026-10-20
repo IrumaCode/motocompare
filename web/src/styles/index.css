@@ -100,4 +100,10 @@
     outline: 2px solid var(--accent-ink);
     outline-offset: 2px;
   }
+
+  /* While the sticky comparison tray is shown, keyboard focus must not end up hidden behind it
+     (WCAG 2.2 "Focus not obscured"): scrolling into view leaves room for the tray. */
+  html:has([data-comparison-tray]) {
+    scroll-padding-bottom: 9rem;
+  }
 }

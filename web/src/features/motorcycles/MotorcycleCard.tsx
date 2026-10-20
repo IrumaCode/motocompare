@@ -1,4 +1,5 @@
 import { EngineIcon, LightningIcon, ScalesIcon, type Icon } from '@phosphor-icons/react';
+import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router';
 import type { DocumentType } from '../../generated/graphql';
 import { formatCop, formatNumber, formatUsd } from '../../lib/format';
@@ -37,7 +38,14 @@ function Price({ priceUsd, priceCop }: Pick<MotorcycleCardData, 'priceUsd' | 'pr
  * The whole card is clickable, but only the title is a real link: its ::after covers the card
  * ("stretched link"), so screen readers hear one short link instead of the whole card content.
  */
-export function MotorcycleCard({ motorcycle }: { motorcycle: MotorcycleCardData }) {
+export function MotorcycleCard({
+  motorcycle,
+  actions,
+}: {
+  motorcycle: MotorcycleCardData;
+  /** Controls next to the price; they sit above the stretched link so they stay clickable. */
+  actions?: ReactNode;
+}) {
   const location = useLocation();
 
   return (
@@ -80,8 +88,9 @@ export function MotorcycleCard({ motorcycle }: { motorcycle: MotorcycleCardData 
         </dl>
 
         <div className="mt-auto pt-4">
-          <div className="border-t border-line pt-4">
+          <div className="flex flex-wrap items-end justify-between gap-3 border-t border-line pt-4">
             <Price priceUsd={motorcycle.priceUsd} priceCop={motorcycle.priceCop} />
+            {actions && <div className="relative z-[1] flex items-center gap-2">{actions}</div>}
           </div>
         </div>
       </div>
