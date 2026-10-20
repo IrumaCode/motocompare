@@ -9,10 +9,8 @@ import {
   toMotorcyclesVariables,
   type CatalogParams,
 } from './catalog-search-params';
-import { catalogQuery, filterOptionsQuery } from './catalog-queries';
+import { CATALOG_PAGE_SIZE, catalogQuery, filterOptionsQuery } from './catalog-queries';
 import { CatalogPage } from './CatalogPage';
-
-const PAGE_SIZE = 12;
 
 const filterOptionsMock: MockLink.MockedResponse = {
   request: { query: filterOptionsQuery },
@@ -27,22 +25,27 @@ const filterOptionsMock: MockLink.MockedResponse = {
   },
 };
 
-/** The catalog query the page sends for this URL, answered with these motorcycles. */
+type CatalogMockOptions = Partial<MockLink.MockedResponse> & {
+  /** Matches across all pages, when it differs from the motorcycles on this page */
+  totalCount?: number;
+};
+
+/**
+ * The catalog query the page sends for this URL, answered with these motorcycles. The variables
+ * come from the same URL mapping the page uses, so a bug in that mapping would pass here too:
+ * catalog-search-params.test.ts is the test that guards it.
+ */
 function catalogMock(
   query: string,
   motorcycles: readonly MotorcycleMock[],
-  response: Partial<MockLink.MockedResponse> = {},
+  { totalCount = motorcycles.length, ...response }: CatalogMockOptions = {},
 ): MockLink.MockedResponse {
   const params: CatalogParams = parseCatalogParams(new URLSearchParams(query));
   return {
-    request: { query: catalogQuery, variables: toMotorcyclesVariables(params, PAGE_SIZE) },
+    request: { query: catalogQuery, variables: toMotorcyclesVariables(params, CATALOG_PAGE_SIZE) },
     result: {
       data: {
-        motorcycles: {
-          __typename: 'MotorcyclePage',
-          totalCount: motorcycles.length,
-          items: motorcycles,
-        },
+        motorcycles: { __typename: 'MotorcyclePage', totalCount, items: motorcycles },
       },
     },
     ...response,
@@ -112,6 +115,42 @@ describe('CatalogPage', () => {
 
     expect(screen.getByTestId('location')).toHaveTextContent(/^\/motos$/);
     expect(await screen.findByText('2 motos')).toBeInTheDocument();
+  });
+
+  it('moves to another page and takes the focus to the results', async () => {
+    const user = userEvent.setup();
+    renderCatalog('', [
+      catalogMock('', [mt07], { totalCount: 13 }),
+      catalogMock('pagina=2', [z900], { totalCount: 13 }),
+    ]);
+
+    await user.click(await screen.findByRole('link', { name: 'Página 2' }));
+
+    expect(screen.getByTestId('location')).toHaveTextContent('/motos?pagina=2');
+    expect(await screen.findByRole('link', { name: 'Z900' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Resultados' })).toHaveFocus();
+  });
+
+  it('explains when the page in the URL does not exist', async () => {
+    renderCatalog('pagina=5', [catalogMock('pagina=5', [], { totalCount: 2 })]);
+
+    expect(await screen.findByText('Esta página no existe')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ir a la página 1' })).toBeInTheDocument();
+  });
+
+  it('does not keep showing the old list after a filter change fails', async () => {
+    const user = userEvent.setup();
+    renderCatalog('', [
+      catalogMock('', [mt07, z900]),
+      catalogMock('marca=kawasaki', [], { result: undefined, error: new Error('Failed to fetch') }),
+    ]);
+    await screen.findByRole('link', { name: 'MT-07' });
+
+    await user.click(within(sidebar()).getByRole('button', { name: 'Kawasaki' }));
+
+    // The previous results would look like the filtered ones: the error replaces them
+    expect(await screen.findByRole('alert')).toHaveTextContent('No pudimos cargar el catálogo');
+    expect(screen.queryByRole('link', { name: 'MT-07' })).not.toBeInTheDocument();
   });
 
   it('shows an error with a retry when the API fails', async () => {

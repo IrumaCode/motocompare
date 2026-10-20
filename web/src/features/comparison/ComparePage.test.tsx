@@ -122,7 +122,8 @@ describe('ComparePage', () => {
     const user = userEvent.setup();
     renderPage(href(mt07.slug, z900.slug, duke.slug), [
       compareMock([mt07, z900, duke]),
-      compareMock([mt07, duke]),
+      // Never answers: the assertions below always see the page while the new list loads
+      compareMock([mt07, duke], { delay: Infinity }),
     ]);
     await screen.findByRole('table');
 
