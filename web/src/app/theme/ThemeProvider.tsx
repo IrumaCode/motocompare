@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
 import { ThemeContext, type Theme, type ThemeContextValue } from './theme-context';
 
 // Keep in sync with the inline script in index.html
@@ -37,7 +37,10 @@ function storeTheme(theme: Theme): void {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(readInitialTheme);
 
-  useEffect(() => {
+  // Layout effect: all layout effects run before any passive effect, so components that read
+  // the theme colors in a useEffect (charts) see the new data-theme even though children's
+  // effects run before their parents'.
+  useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
     document.documentElement.style.colorScheme = theme;
   }, [theme]);
