@@ -146,7 +146,7 @@ describe('CatalogPage', () => {
     ]);
     await screen.findByRole('link', { name: 'MT-07' });
 
-    await user.click(within(sidebar()).getByRole('button', { name: 'Kawasaki' }));
+    await user.click(await within(sidebar()).findByRole('button', { name: 'Kawasaki' }));
 
     // The previous results would look like the filtered ones: the error replaces them
     expect(await screen.findByRole('alert')).toHaveTextContent('No pudimos cargar el catálogo');
