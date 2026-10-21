@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Say hello
+        run: |
+          echo "Hola desde GitHub Actions"
+          node --version
+          ls
