@@ -34,3 +34,33 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm format:check
       - run: pnpm test
+  db-tests:
+    name: Database tests
+    runs-on: ubuntu-latest
+    # A throwaway PostgreSQL next to the job, like docker compose locally
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: motocompare
+          POSTGRES_PASSWORD: motocompare
+          POSTGRES_DB: motocompare_test
+        ports:
+          - 5432:5432
+        # Steps start only once the database accepts connections
+        options: >-
+          --health-cmd "pg_isready -U motocompare -d motocompare_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://motocompare:motocompare@localhost:5432/motocompare_test?schema=public
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:db
