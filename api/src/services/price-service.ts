@@ -28,7 +28,7 @@ export function createPriceService(provider: ExchangeRateProvider): PriceService
         return null;
       }
       const rate = await getExchangeRate();
-      return rate ? Math.floor(priceUsd * rate.copPerUsd) : null;
+      return rate ? Math.round(priceUsd * rate.copPerUsd) : null;
     },
   };
 }
