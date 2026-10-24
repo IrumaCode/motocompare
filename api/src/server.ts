@@ -6,7 +6,7 @@ import { createPrismaClient } from './db/prisma-client.js';
 
 const config = loadConfig(process.env);
 const prisma = createPrismaClient(config.databaseUrl);
-const yoga = createApp(createAppDependencies(prisma));
+const yoga = createApp(createAppDependencies(prisma), { corsOrigins: config.corsOrigins });
 const server = createServer(yoga.requestListener);
 
 server.listen(config.port, () => {

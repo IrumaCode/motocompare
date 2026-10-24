@@ -49,6 +49,11 @@ export function createAppDependencies(prisma: PrismaClient): AppDependencies {
   };
 }
 
+export interface AppOptions {
+  /** Web origins allowed to call the API from a browser. Empty: any origin (Yoga's default). */
+  readonly corsOrigins?: readonly string[];
+}
+
 /** Shows InputError messages to clients; any other error keeps Yoga's default masking. */
 function exposeInputErrors(error: unknown, message: string, isDev?: boolean): Error {
   const cause = error instanceof GraphQLError ? error.cause : error;
@@ -62,11 +67,10 @@ function exposeInputErrors(error: unknown, message: string, isDev?: boolean): Er
  * Builds the GraphQL app. It only depends on the Fetch API, so the same instance can be served
  * by Node (see server.ts) or by a serverless runtime.
  */
-export function createApp({
-  motorcycleRepository,
-  catalogRepository,
-  exchangeRateProvider,
-}: AppDependencies): YogaServerInstance<object, GraphQLContext> {
+export function createApp(
+  { motorcycleRepository, catalogRepository, exchangeRateProvider }: AppDependencies,
+  { corsOrigins = [] }: AppOptions = {},
+): YogaServerInstance<object, GraphQLContext> {
   const services: Services = {
     motorcycles: createMotorcycleService(motorcycleRepository),
     catalog: createCatalogService(catalogRepository),
@@ -80,5 +84,6 @@ export function createApp({
       loaders: createLoaders({ catalog: catalogRepository, motorcycles: services.motorcycles }),
     }),
     maskedErrors: { maskError: exposeInputErrors },
+    cors: corsOrigins.length > 0 ? { origin: [...corsOrigins] } : undefined,
   });
 }
