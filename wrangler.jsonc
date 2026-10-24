@@ -1,0 +1,11 @@
+// Cloudflare Workers config for the web app: a static-assets-only Worker (no server code).
+// The API lives on Render; the web calls it through VITE_API_URL, set at build time.
+{
+  "name": "motocompare",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./web/dist",
+    // Unknown paths (e.g. /motos/yamaha-mt-07-2024 on reload) serve index.html for React Router
+    "not_found_handling": "single-page-application",
+  },
+}
