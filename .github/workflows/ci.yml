@@ -25,9 +25,10 @@ jobs:
       # Installs the pnpm version declared in "packageManager" (package.json)
       - uses: pnpm/action-setup@v6
 
+      # Same Node version as Render and Cloudflare Pages: all three read .node-version
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version-file: .node-version
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
@@ -62,7 +63,7 @@ jobs:
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:db
