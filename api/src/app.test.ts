@@ -163,3 +163,34 @@ describe('GraphQL API', () => {
     expect(data?.motorcycle.powerPercentile).toBe(100);
   });
 });
+
+describe('CORS', () => {
+  // Two origins, as in production (custom domain + pages.dev): Yoga then checks each request
+  const allowedOrigin = 'https://motocompare.example.dev';
+  const previewOrigin = 'https://motocompare.pages.dev';
+
+  async function preflightFrom(origin: string): Promise<string | null> {
+    const app = createApp(
+      {
+        motorcycleRepository: createFakeMotorcycleRepository([mt07]),
+        catalogRepository: createFakeCatalogRepository(),
+        exchangeRateProvider: fakeExchangeRateProvider(),
+      },
+      { corsOrigins: [allowedOrigin, previewOrigin] },
+    );
+    const response = await app.fetch('http://test/graphql', {
+      method: 'OPTIONS',
+      headers: { origin, 'access-control-request-method': 'POST' },
+    });
+    return response.headers.get('access-control-allow-origin');
+  }
+
+  it('lets the configured web origins call the API', async () => {
+    expect(await preflightFrom(allowedOrigin)).toBe(allowedOrigin);
+    expect(await preflightFrom(previewOrigin)).toBe(previewOrigin);
+  });
+
+  it('does not let other origins call the API', async () => {
+    expect(await preflightFrom('https://evil.example.com')).toBe('null');
+  });
+});
