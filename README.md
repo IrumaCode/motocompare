@@ -4,7 +4,13 @@ Aplicación para comparar especificaciones de motocicletas: catálogo con filtro
 
 Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) construido por fases.
 
-> **Estado:** Fase 6, pruebas automáticas con Vitest y Testing Library: servicios y queries GraphQL de la API, consultas de Prisma contra una base de datos de prueba, y los flujos principales de la web (catálogo, ficha, bandeja y comparador). La fase anterior añadió el comparador de 2 a 4 motos con gráficos.
+**Demo:** [motocompare.sneyderla.dev](https://motocompare.sneyderla.dev)
+
+> La API y la base de datos usan planes gratuitos que se duermen sin tráfico. Si nadie ha entrado en un rato, la primera carga puede tardar hasta un minuto; la web lo avisa mientras espera.
+
+| Catálogo                                             | Ficha                                          | Comparación                                            |
+| ---------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------ |
+| ![Catálogo con filtros](docs/capturas/catalogo.webp) | ![Ficha de una moto](docs/capturas/ficha.webp) | ![Gráficos de comparación](docs/capturas/comparar.png) |
 
 ## Stack
 
@@ -13,7 +19,24 @@ Proyecto personal de portafolio ([sneyderla.dev](https://sneyderla.dev)) constru
 - **API:** Node.js + GraphQL Yoga + Prisma 7 + PostgreSQL
 - **Web:** React + Vite + Tailwind CSS + Apollo Client + React Router, Chart.js (gráficos) y dnd-kit (arrastrar y soltar)
 - **Calidad:** ESLint, Prettier, Vitest + Testing Library (jsdom)
+- **CI:** GitHub Actions (lint, tipos, formato y pruebas en cada pull request)
 - **Infra local:** Docker Compose (PostgreSQL 18)
+- **Producción (planes gratuitos):** Cloudflare Workers (web estática), Render (API) y Neon (PostgreSQL)
+
+## Producción
+
+```
+navegador ──► motocompare.sneyderla.dev   Cloudflare Workers: solo archivos estáticos (wrangler.jsonc)
+    │
+    └── GraphQL ──► motocompare.onrender.com   Render: API Node compilada (se duerme tras 15 min)
+                        │
+                        └──► Neon: PostgreSQL 18 (se duerme tras 5 min)
+```
+
+- **Despliegue automático:** Cloudflare y Render compilan y publican cada push a `main`. Render aplica las migraciones pendientes (`db:deploy`) antes de compilar.
+- **Variables de entorno:** `DATABASE_URL` y `CORS_ORIGINS` en Render; `VITE_API_URL` como variable de build en Cloudflare (Vite la incrusta al compilar).
+- **Versión de Node:** `.node-version`, leída por el CI, Render y Cloudflare.
+- **Sin costos:** no se usan pings para mantener la API despierta, porque también despertarían la base de datos y agotarían sus horas de cómputo gratuitas.
 
 ## Requisitos
 
@@ -57,6 +80,9 @@ El campo `priceCop` convierte el precio con la TRM oficial del día, publicada p
 | `pnpm test:db`                 | Prueba las consultas contra PostgreSQL (Docker) |
 | `pnpm --filter api dev`        | Levanta la API y se reinicia al guardar         |
 | `pnpm --filter api codegen`    | Regenera los tipos de GraphQL de la API         |
+| `pnpm --filter api build`      | Compila la API a JavaScript en `api/dist`       |
+| `pnpm --filter api start`      | Ejecuta la API compilada (producción)           |
+| `pnpm --filter api db:deploy`  | Aplica migraciones pendientes, sin borrar datos |
 | `pnpm --filter web dev`        | Levanta la web con recarga en caliente          |
 | `pnpm --filter web codegen`    | Regenera los tipos de las queries de la web     |
 | `pnpm --filter web build`      | Genera el build de producción en `web/dist`     |
@@ -94,5 +120,7 @@ motocompare/
 │   ├── components/ui/    # componentes genéricos
 │   └── lib/              # cliente Apollo y utilidades
 ├── docs/aprendizaje/     # notas de aprendizaje por fase
+├── .github/workflows/    # CI con GitHub Actions
+├── wrangler.jsonc        # despliegue de la web en Cloudflare
 └── docker-compose.yml    # PostgreSQL local
 ```
