@@ -165,9 +165,9 @@ describe('GraphQL API', () => {
 });
 
 describe('CORS', () => {
-  // Two origins, as in production (custom domain + pages.dev): Yoga then checks each request
+  // Two origins, as in production (custom domain + workers.dev): Yoga then checks each request
   const allowedOrigin = 'https://motocompare.example.dev';
-  const previewOrigin = 'https://motocompare.pages.dev';
+  const previewOrigin = 'https://motocompare.zsneyder.workers.dev';
 
   async function preflightFrom(origin: string): Promise<string | null> {
     const app = createApp(
