@@ -23,12 +23,13 @@ describe('loadConfig', () => {
   it('reads a comma-separated list of CORS origins', () => {
     const config = loadConfig({
       DATABASE_URL,
-      CORS_ORIGINS: ' https://motocompare.sneyderla.dev, https://motocompare.pages.dev ,',
+      CORS_ORIGINS:
+        ' https://motocompare.sneyderla.dev, https://motocompare.zsneyder.workers.dev ,',
     });
 
     expect(config.corsOrigins).toEqual([
       'https://motocompare.sneyderla.dev',
-      'https://motocompare.pages.dev',
+      'https://motocompare.zsneyder.workers.dev',
     ]);
   });
 });
